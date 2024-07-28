@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mandelbrot Set</title>
+    <link rel="stylesheet" href="./styles/imggen.css">
+</head>
+<body>
+    <h1>Mandelbrot Set</h1>
+    <h2>Image Generator</h2>
+    <div>
+        <div class="grpdiv">
+            <label for="lim">Iteration Limit</label>
+            <input type="text" id="lim" value="70"/>
+        </div>
+        <div class="grpdiv">
+            <label for="zoom">Zoom Factor</label>
+            <input type="text" id="zoom" value="2.0"/>
+        </div>
+        <div class="grpdiv">
+            <label for="pixwid">Width in Pixels</label>
+            <input type="text" id="pixwid" value="800"/>
+        </div>
+        <button id="redrawbutton" class="buttnavail">Redraw</button>
+    </div>
+    <div id="imgdiv">
+        <canvas id="fractalcanvas" width="800" height="600">
+        </canvas>   
+    </div>
+    <script src="./scripts/fractalimggen.js"></script>
+</body>
+</html>

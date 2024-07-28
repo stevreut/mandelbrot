@@ -1,3 +1,9 @@
+# Mac
+.DS_store
+
+# Temporary local backups
+.bak
+
 # Logs
 logs
 *.log
