@@ -52,6 +52,10 @@ function fractalGenPageInit() {
             drawMandelbrot(imgParams.xMin,imgParams.yMin,imgParams.realWidth,lim);
         });
     }
+    let resetButton = document.getElementById("resetbutton");
+    if (resetButton) {
+        resetButton.addEventListener("click",fractalGenPageInit);
+    }
     pixWidthInput = document.getElementById("pixwid");
     if (pixWidthInput) {
         pixWidthInput.addEventListener("change",(event)=>handlePixWidChange(event));
