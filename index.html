@@ -12,15 +12,15 @@
     <div>
         <div class="grpdiv">
             <label for="lim">Iteration Limit</label>
-            <input type="text" id="lim" value="70"/>
+            <input type="number" min="0" step="1" id="lim" value="70"/>
         </div>
         <div class="grpdiv">
             <label for="zoom">Zoom Factor</label>
-            <input type="text" id="zoom" value="2.0"/>
+            <input type="number" min="0" id="zoom" value="2.0"/>
         </div>
         <div class="grpdiv">
             <label for="pixwid">Width in Pixels</label>
-            <input type="text" id="pixwid" value="800"/>
+            <input type="number" min="2" max="8000" step="1" id="pixwid" value="800"/>
         </div>
         <button id="redrawbutton" class="buttnavail">Redraw</button>
     </div>
