@@ -195,15 +195,27 @@ function handlePixWidChange(event) {
     const saveWidth = imgParams.canvWidth;
     let newWidStr = pixWidthInput.value.trim();
     try {
+        console.log('newWidStr = "', newWidStr, '"');
         const newWid = parseInt(newWidStr);
+        console.log('newWid = ', newWid);
         if (typeof newWid == 'number' && !Number.isNaN(newWid) && newWid > 3) {
             const newHgt = Math.round(newWid*ASPECTRATIO);
             if (newWid !== saveWidth) {
+                pixWidthInput.value = newWid;
                 initCanvasOnly(newWid,newHgt);
                 drawMandelbrot(imgParams.xMin,imgParams.yMin,imgParams.realWidth,imgParams.limit);
             }
+        } else {
+            throw ('invalid or nonnumeric entry for pixel width');
         }
     } catch (err) {
         console.error('ignoring pixel width change error = ', err);
+        setTimeout(()=>{
+            pixWidthInput.value = saveWidth;  // On error, restore to canvas dimension
+        },1500 /* 1.5 seconds */ );
+        pixWidthInput.classList.add("warninput");
+        setTimeout(()=>{
+            pixWidthInput.classList.remove("warninput");
+        },3000 /* 3 seconds */ );
     }
 }

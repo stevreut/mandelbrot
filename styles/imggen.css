@@ -49,3 +49,7 @@ button.buttnnotavail {
 p {
     margin-left: 36px;
 }
+.warninput {
+    background-color: #ffff00;
+    color: #ff0000;
+}
