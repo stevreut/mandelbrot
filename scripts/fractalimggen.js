@@ -7,6 +7,8 @@ let canvasHasListener = false;
 let pixWidthInput = null;
 
 const ASPECTRATIO = 0.75;
+const MINPIXWID = 120;
+const MAXPIXWID = 800;
 
 let imgParams = {};
 
@@ -26,6 +28,15 @@ function initCanvasOnly(wid,hgt) {
     if ((wid)&&(hgt)) {
         canvas.width = wid;
         canvas.height = hgt;
+    } else {
+        canvas.width = Math.round(Math.max(MINPIXWID,Math.min(MAXPIXWID,window.screen.availWidth*0.8)));
+        canvas.height = Math.round(canvas.width*ASPECTRATIO);
+        console.log('canvas dims = ', canvas.width, ' x ', canvas.height);
+        const pixWidElem = document.getElementById("pixwid");
+        if (pixWidElem) {
+            pixWidElem.value = canvas.width;
+            console.log('pix wid set to ', pixWidElem.value);
+        }
     }
     // If wid and hgt parameters are not provided then default to pre-existing
     // canvas dimensions, presumably as specified in the HTML
