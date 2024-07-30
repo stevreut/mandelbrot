@@ -12,6 +12,8 @@ const MAXPIXWID = 800;
 
 let imgParams = {};
 
+let imgHistory = [];
+
 function initCanvasOnly(wid,hgt) {
     const id = "fractalcanvas";
     canvas = document.getElementById(id);
@@ -42,6 +44,7 @@ function initCanvasOnly(wid,hgt) {
 }
 
 function fractalGenPageInit() {
+    imgHistory = [];
     initCanvasOnly();
     let drawButton = document.getElementById("redrawbutton");
     if (drawButton) {
@@ -119,7 +122,9 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
         }
     }
     imgData.data = imgDataData;
+    imgHistory.push(imgParams);
     ctx.putImageData(imgData,0,0);
+    renderHistory();
     if (!canvasHasListener) {
         addCanvasListener();
     }
@@ -283,4 +288,63 @@ function handlePixWidChange(event) {
             pixWidthInput.classList.remove("warninput");
         },3000 /* 3 seconds */ );
     }
+}
+
+function renderHistory() {
+    const histViewElem = document.getElementById("histview");
+    if (!histViewElem) {
+        console.error('no histview id on page');
+        return;
+    }
+    let histTable = document.querySelector(".histview.table");
+    if (histTable) {
+        console.log("removing table at " + (new Date()));
+        histTable.remove();
+    } else {
+        console.log("no table found to remove at " + (new Date()));
+    }
+    if (imgHistory.length < 1) {
+        // Nothing to render regardless of option
+        return;
+    }
+    const option = getHistoryOption();
+    if (option === "none") {
+        return;
+    }
+    histTable = document.createElement("table");
+    let tHeadElem = document.createElement("thead");
+    let trElem = document.createElement("tr");
+    const hdrs = ("Lower-left corner;Width;Limit;Pixel Dimensions;Quality").split(";");
+    hdrs.forEach((val)=>{
+        const tdElem = document.createElement("td");
+        tdElem.textContent = val;
+        trElem.appendChild(tdElem);
+    });
+    tHeadElem.appendChild(trElem);
+    histTable.appendChild(tHeadElem);
+    const lastIdx = imgHistory.length-1;
+    const firstIdx = (option === "all" ? 0 : imgHistory.length-1);
+    let tBodyElem = document.createElement("tbody");
+    for (let row=firstIdx;row<=lastIdx;row++) {
+        let histRow = imgHistory[row];
+        let rowElem = document.createElement("tr");
+        pushCell(rowElem,histRow.xMin + "+" + histRow.yMin + "i");
+        pushCell(rowElem,histRow.realWidth);
+        pushCell(rowElem,histRow.limit);
+        pushCell(rowElem,histRow.canvWidth + " x " + histRow.canvHeight);
+        pushCell(rowElem,histRow.dither);
+        tBodyElem.appendChild(rowElem);
+    }
+    histTable.appendChild(tBodyElem);
+    histViewElem.appendChild(histTable);
+    //
+    function pushCell(tr,cellContent) {
+        let td = document.createElement("td");
+        td.textContent = cellContent;
+        tr.appendChild(td);
+    }
+}
+
+function getHistoryOption() {
+    return "all";  // TODO - temporary dummy implementation
 }

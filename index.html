@@ -34,6 +34,14 @@
         </div>
         <button id="redrawbutton" class="buttnavail">Redraw</button>
         <button id="resetbutton" class="buttnavail">Reset</button>
+        <div class="grpdiv">
+            <label for="histopt">History Viewing Options</label>
+            <select id="histopt">
+                <option value="none">none</option>
+                <option value="last" selected="selected">last image only</option>
+                <option value="all">entire image history for this session</option>
+            </select>
+        </div>
     </div>
     <p>Click on the image to zoom in or out.  Increase the <em>Iteration Limit</em>
         for greater detail.</p>
@@ -41,6 +49,7 @@
         <canvas id="fractalcanvas" width="800" height="600">
         </canvas>   
     </div>
+    <p id="histview"></p>
     <p>GitHub repository for this tool : <a href="https://github.com/stevreut/mandelbrot">github.com/stevreut/mandelbrot</a></p>
     <script src="./scripts/fractalimggen.js"></script>
 </body>

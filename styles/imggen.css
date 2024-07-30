@@ -59,3 +59,11 @@ p {
     background-color: #ffff00;
     color: #ff0000;
 }
+#histview>table {
+    border-collapse: collapse;
+}
+#histview td {
+    background-color: #03478c;
+    padding: 2px;
+    border: 1px solid red;
+}
