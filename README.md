@@ -91,9 +91,9 @@ relatively simple *function mandelbrot()* within Javascript file [fractalimggen.
 
 The following are all possible or likely enhancements to this tool:
 
-* Direct setting of pixel values (Currently pixels are set via canvas fillRect() 
+<!-- * Direct setting of pixel values (Currently pixels are set via canvas fillRect() 
 function but canvas enables direct (and more efficient) manipulation of the pixel
-primary color byte values.)
+primary color byte values.) -->
 <!-- * "Responsive" formatting for smart phones and other smaller devices -->
 * Julia Set mode
 * Display of image parameters on screen

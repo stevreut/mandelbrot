@@ -31,11 +31,9 @@ function initCanvasOnly(wid,hgt) {
     } else {
         canvas.width = Math.round(Math.max(MINPIXWID,Math.min(MAXPIXWID,window.screen.availWidth*0.8)));
         canvas.height = Math.round(canvas.width*ASPECTRATIO);
-        console.log('canvas dims = ', canvas.width, ' x ', canvas.height);
         const pixWidElem = document.getElementById("pixwid");
         if (pixWidElem) {
             pixWidElem.value = canvas.width;
-            console.log('pix wid set to ', pixWidElem.value);
         }
     }
     // If wid and hgt parameters are not provided then default to pre-existing
@@ -77,7 +75,9 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
     imgParams.yMax = yMin + (imgParams.canvHeight-1)*imgParams.incrPerPixel;
     imgParams.dither = getDitherValue();
     imgParams.subIncr = imgParams.incrPerPixel/imgParams.dither;
-    imgParams.subIncrBase = -imgParams.subIncr*(imgParams.dither-1)/2;  // TODO
+    imgParams.subIncrBase = -imgParams.subIncr*(imgParams.dither-1)/2;
+    const imgData = ctx.getImageData(0,0,canvas.width,canvas.height);
+    const imgDataData = imgData.data;
     let m2 = imgParams.dither**(-2);
     let button = document.getElementById("redrawbutton");
     button.disabled = true;
@@ -93,13 +93,10 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
         for (let i=0;i<imgParams.canvWidth;i++) {
             let x = imgParams.xMin+imgParams.incrPerPixel*i;
             pixelOffset+=4;
-            // TODO - temporary code to convert primary array color to
-            // proper HTML color
             let avgColor;
             if (imgParams.dither === 1) {
                 let count = mandelbrot(x, y, limit);
-                let color = colorFromCount(count, limit);
-                avgColor = color;
+                avgColor = colorFromCount(count, limit);
             } else {
                 avgColor = [0,0,0];
                 for (let ii=0;ii<imgParams.dither;ii++) {
@@ -115,15 +112,14 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
                 }
                 avgColor.forEach((val,idx)=>{avgColor[idx]=Math.round(val*m2)});  // TODO - refine use of forEach() to use 'this'
             }
-            let hexColor = '#';
-            avgColor.forEach((prim)=>{
-                hexColor += (prim.toString(16)).padStart(2,'0');
-            })
-            // TODO - end temporary code
-            ctx.fillStyle = hexColor;
-            ctx.fillRect(i,j,1,1);
+            imgDataData[pixelOffset] = avgColor[0];
+            imgDataData[pixelOffset+1] = avgColor[1];
+            imgDataData[pixelOffset+2] = avgColor[2];
+            imgDataData[pixelOffset+3] = 255;
         }
     }
+    imgData.data = imgDataData;
+    ctx.putImageData(imgData,0,0);
     if (!canvasHasListener) {
         addCanvasListener();
     }
@@ -137,9 +133,7 @@ function getDitherValue() {
         if (!ditherElem) {
             throw 'no dither element found';
         }
-        console.log('dither = ', ditherElem);
         val = parseInt(ditherElem.value);
-        console.log('dither value = ', val, '  type = ', typeof val);
         if (Number.isNaN(val) || val < 1 || val > 5) {
             console.error('invalid dither selection = ', val);
             throw ('invalid dither selection');
@@ -268,9 +262,7 @@ function handlePixWidChange(event) {
     const saveWidth = imgParams.canvWidth;
     let newWidStr = pixWidthInput.value.trim();
     try {
-        console.log('newWidStr = "', newWidStr, '"');
         const newWid = parseInt(newWidStr);
-        console.log('newWid = ', newWid);
         if (typeof newWid == 'number' && !Number.isNaN(newWid) && newWid > 3) {
             const newHgt = Math.round(newWid*ASPECTRATIO);
             if (newWid !== saveWidth) {
