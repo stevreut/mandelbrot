@@ -114,7 +114,7 @@ and perhaps related mathematical objects
 
 https://opensource.org/license/mit/ 
 
-(See also the [LICENSE](https://github.com/stevreut/js-clock-widgets/blob/main/LICENSE) file in this repository.)
+(See also the [LICENSE](https://github.com/stevreut/mandelbrot/blob/main/LICENSE) file in this repository.)
 
 # Author
 
