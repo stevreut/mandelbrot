@@ -10,6 +10,8 @@ const ASPECTRATIO = 0.75;
 const MINPIXWID = 120;
 const MAXPIXWID = 800;
 
+const DITHER = 2;  // TODO - will be dynamical and user-configurable later
+
 let imgParams = {};
 
 function initCanvasOnly(wid,hgt) {
@@ -75,6 +77,9 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
     imgParams.incrPerPixel = realWidth/(imgParams.canvWidth-1);
     imgParams.yMin = yMin;
     imgParams.yMax = yMin + (imgParams.canvHeight-1)*imgParams.incrPerPixel;
+    imgParams.dither = DITHER;  // TODO
+    imgParams.subIncr = imgParams.incrPerPixel/DITHER;
+    imgParams.subIncrBase = -imgParams.subIncr*(imgParams.dither-1)/2;  // TODO
     let button = document.getElementById("redrawbutton");
     button.disabled = true;
     button.className = "buttnnotavail";
@@ -87,10 +92,35 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
         for (let i=0;i<imgParams.canvWidth;i++) {
             let x = imgParams.xMin+imgParams.incrPerPixel*i;
             pixelOffset+=4;
-            // TODO - *temporarily* ignore pixelOffset and just draw a rectangle (rectFill())
-            let count = mandelbrot(x, y, limit);
-            let color = colorFromCount(count, limit);
-            ctx.fillStyle = color;
+            // TODO - temporary code to convert primary array color to
+            // proper HTML color
+            let avgColor;
+            if (imgParams.dither === 1) {
+                let count = mandelbrot(x, y, limit);
+                let color = colorFromCount(count, limit);
+                avgColor = color;
+            } else {
+                avgColor = [0,0,0];
+                for (let ii=0;ii<imgParams.dither;ii++) {
+                    for (let jj=0;jj<imgParams.dither;jj++) {
+                        let count = mandelbrot(x+imgParams.subIncrBase+ii*imgParams.subIncr,
+                            y+imgParams.subIncrBase+jj*imgParams.subIncr,limit);
+                        let color = colorFromCount(count, limit);
+                        // TODO - forEach() or similar method could be used here - TBD
+                        for (let kk=0;kk<3;kk++) {
+                            avgColor[kk]+=color[kk];
+                        }
+                    }
+                }
+                let m2 = imgParams.dither**(-2);
+                avgColor.forEach((val,idx)=>{avgColor[idx]=Math.round(val*m2)});  // TODO - refine use of forEach() to use 'this'
+            }
+            let hexColor = '#';
+            avgColor.forEach((prim)=>{
+                hexColor += (prim.toString(16)).padStart(2,'0');
+            })
+            // TODO - end temporary code
+            ctx.fillStyle = hexColor;
             ctx.fillRect(i,j,1,1);
         }
     }
@@ -161,38 +191,57 @@ function mandelbrot(x, y, limit) {
 }
 
 function colorFromCount(count, limit) {
+    // Returns an array representing a color.  See setPalette() for
+    // a more detailed explanation.
     if (count >= limit) {
-        return '#000000';
+        return [0,0,0];  // black - default value for exceeded limit
     } else {
         if (!palette) {
             setPalette();
         }
-        return palette[(Math.floor(count)%256)];
+        return palette[(Math.floor(count)%(palette.length))];
     }
 }
 
 function setPalette() {
+    // Sets the global 'palette' variable to be an array of 256 (for now) 
+    // 'colors'; however, these colors are actually nested arrays each having
+    // three integer values.  These values could later be converted to
+    // proper #RRGGBB format HTML colors if so desired but, for the purposes
+    // of functions using 'palette', this format is more convenient and enables
+    // greater flexibility in making use of these colors - particularly with
+    // respect to further mathematical manipulation of the primary values
+    // when desired.
     palette = [];
-    for (let i=0;i<256;i++) {
-        let theta = i*2*Math.PI/256;
-        palette.push(colorOfAngle(theta));
+    const SZ = 256;
+    for (let i=0;i<SZ;i++) {
+        let theta = i*2*Math.PI/SZ;
+        let c = colorOfAngle(theta);
+        if (i%2===0) {
+            c = c.map((val)=>Math.round(val*0.93));  // TODO
+        }
+        palette.push(c);
     }
-}
-
-function colorOfAngle(th) {
-    let colr = '#';
-    colr += hexCol(th+2);
-    colr += hexCol(th+1);
-    colr += hexCol(th);
-    return colr;
-}
-
-function hexCol(th) {
-    let val = (Math.cos(th)+1)/2;
-    val = Math.round(val*255);
-    let hx = val.toString(16);
-    hx = hx.padStart(2,'0');
-    return hx;
+    function colorOfAngle(th) {
+        // Returns an array of three primary color values, each of
+        // which is an integer from 0 to 255.  These returned
+        // arrays can be used to determine a corresponding
+        // HTML color value (e.g. "#RRGGBB").
+        let colr = [];
+        for (let i=2;i>=0;i--) {
+            colr.push(hexCol(th+i));
+        }
+        return colr;
+        function hexCol(th) {
+            // Returns a primary color value (an integer in the range
+            // from 0 to 255) based on the ("theta") an angle somewhat
+            // akin to a hue value
+            let val = (Math.cos(th)+1)/2;
+            val = Math.floor(val*256);
+            val = Math.max(0,Math.min(255,val));
+            return val;
+        }
+    }
 }
 
 function handlePixWidChange(event) {
