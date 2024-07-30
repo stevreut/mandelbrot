@@ -46,6 +46,12 @@ button.buttnnotavail {
     padding: 3px;
     border-radius: 3px;
 }
+.grpdiv>select {
+    padding: 5px;
+    color: #000000;
+    background-color: #89a9c1;
+    font-weight: bold;
+}
 p {
     margin-left: 36px;
 }

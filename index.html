@@ -22,6 +22,16 @@
             <label for="pixwid">Width in Pixels</label>
             <input type="number" min="2" max="8000" step="1" id="pixwid" value="800"/>
         </div>
+        <div class="grpdiv">
+            <label for="dither">Quality</label>
+            <select id="dither">
+                <option value="1">1</option>
+                <option value="2" selected="selected">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
         <button id="redrawbutton" class="buttnavail">Redraw</button>
         <button id="resetbutton" class="buttnavail">Reset</button>
     </div>

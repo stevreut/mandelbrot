@@ -10,8 +10,6 @@ const ASPECTRATIO = 0.75;
 const MINPIXWID = 120;
 const MAXPIXWID = 800;
 
-const DITHER = 2;  // TODO - will be dynamical and user-configurable later
-
 let imgParams = {};
 
 function initCanvasOnly(wid,hgt) {
@@ -77,16 +75,19 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
     imgParams.incrPerPixel = realWidth/(imgParams.canvWidth-1);
     imgParams.yMin = yMin;
     imgParams.yMax = yMin + (imgParams.canvHeight-1)*imgParams.incrPerPixel;
-    imgParams.dither = DITHER;  // TODO
-    imgParams.subIncr = imgParams.incrPerPixel/DITHER;
+    imgParams.dither = getDitherValue();
+    imgParams.subIncr = imgParams.incrPerPixel/imgParams.dither;
     imgParams.subIncrBase = -imgParams.subIncr*(imgParams.dither-1)/2;  // TODO
+    let m2 = imgParams.dither**(-2);
     let button = document.getElementById("redrawbutton");
     button.disabled = true;
     button.className = "buttnnotavail";
     for (let j=0;j<imgParams.canvHeight;j++) {
-        let y = imgParams.yMax-imgParams.incrPerPixel*j;  // Note subtraction, this 
+        let y = imgParams.yMax-imgParams.incrPerPixel*j;
+            // Note subtraction above.  This 
             // introduces the standard Cartesian coordinate
-            // orientation despite the opposing HTML convention.
+            // orientation where y values increase from bottom to top,
+            // despite the opposing HTML convention.  
         let rowOffset = j*imgParams.canvWidth*4;
         let pixelOffset = rowOffset-4;  // Note the -4 is deliberate
         for (let i=0;i<imgParams.canvWidth;i++) {
@@ -112,7 +113,6 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
                         }
                     }
                 }
-                let m2 = imgParams.dither**(-2);
                 avgColor.forEach((val,idx)=>{avgColor[idx]=Math.round(val*m2)});  // TODO - refine use of forEach() to use 'this'
             }
             let hexColor = '#';
@@ -129,6 +129,26 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
     }
     button.disabled = false;
     button.className = "buttnavail";
+}
+
+function getDitherValue() {
+    try {
+        let ditherElem = document.getElementById("dither");
+        if (!ditherElem) {
+            throw 'no dither element found';
+        }
+        console.log('dither = ', ditherElem);
+        val = parseInt(ditherElem.value);
+        console.log('dither value = ', val, '  type = ', typeof val);
+        if (Number.isNaN(val) || val < 1 || val > 5) {
+            console.error('invalid dither selection = ', val);
+            throw ('invalid dither selection');
+        }
+        return val;
+    } catch (err) {
+        console.error('error obtaining dither value - using default (2); err = ', err);
+        return 2;
+    }
 }
 
 function addCanvasListener() {
