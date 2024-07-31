@@ -56,6 +56,7 @@ function fractalGenPageInit() {
     }
     let resetButton = document.getElementById("resetbutton");
     if (resetButton) {
+        setPageInitVals();
         resetButton.addEventListener("click",fractalGenPageInit);
     }
     pixWidthInput = document.getElementById("pixwid");
@@ -65,6 +66,24 @@ function fractalGenPageInit() {
         console.error('no pixwid id found - resizing disabled');
     }
     setTimeout(()=>drawMandelbrot(-2.3,-1.2,3.2,70),100);
+}
+
+function setPageInitVals() {
+    setVal("lim",70);
+    setVal("zoom","2.0");
+    setVal("dither","2");
+    setVal("histopt","last");
+    setVal("pixwid",Math.round(Math.max(MINPIXWID,Math.min(MAXPIXWID,window.innerWidth*0.8))));
+    //
+    function setVal(id,val) {
+        try {
+            (document.getElementById(id)).value = val;
+        } catch (err) {
+            // Log errors but otherwise ignore so that subsequent 
+            // settings can still proceed without interrupting use.
+            console.error('err on page init - ignoring: err = ', err);
+        }
+    }
 }
 
 function drawMandelbrot(xMin,yMin,realWidth,limit) {

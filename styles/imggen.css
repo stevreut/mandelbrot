@@ -79,3 +79,37 @@ p {
     color: #b1cde9;
     font-family:Verdana, Geneva, Tahoma, sans-serif;
 }
+@media only screen and (max-width: 800px) {
+    .grpdiv {
+        display: inline-block;
+        background-color: #222;
+        border-style: none;
+        margin-top: 3px;
+        margin-bottom: 2px;
+    }
+    .grpdiv>label {
+        /* padding: 1px; */
+        border-style: none;
+    }
+    .grpdiv>select {
+        /* padding: 0px; */
+        margin: 0px;
+        color: #000000;
+        background-color: #89a9c1;
+        font-weight: bold;
+        border-radius: 8px;
+    }
+    .grpdiv>input {
+        /* padding: 0px; */
+        margin: 0px;
+        border-radius: 8px;
+    }
+    button {
+        padding: 3px;
+        font-size: smaller;
+    }
+    .largegrpdiv {
+        padding: 20px;
+    }
+    
+}
