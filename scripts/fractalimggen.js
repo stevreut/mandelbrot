@@ -122,7 +122,8 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
         }
     }
     imgData.data = imgDataData;
-    imgHistory.push(imgParams);
+    const imgParamsClone = Object.assign({},imgParams);  // shallow clone of imgParams
+    imgHistory.push(imgParamsClone);
     ctx.putImageData(imgData,0,0);
     renderHistory();
     if (!canvasHasListener) {
@@ -298,10 +299,7 @@ function renderHistory() {
     }
     let histTable = document.querySelector("#histview table");
     if (histTable) {
-        console.log("removing table at " + (new Date()));
         histTable.remove();
-    } else {
-        console.log("no table found to remove at " + (new Date()));
     }
     if (imgHistory.length < 1) {
         // Nothing to render regardless of option
@@ -315,36 +313,69 @@ function renderHistory() {
     let tHeadElem = document.createElement("thead");
     let trElem = document.createElement("tr");
     const hdrs = ("Lower-left corner;Width;Limit;Pixel Dimensions;Quality").split(";");
-    hdrs.forEach((val)=>{
-        const tdElem = document.createElement("td");
-        tdElem.textContent = val;
-        trElem.appendChild(tdElem);
+    hdrs.forEach((val,idx)=>{
+        const thElem = document.createElement("th");
+        thElem.textContent = val;
+        if (idx !== 1) {
+            thElem.setAttribute("align","center");
+        }
+        trElem.appendChild(thElem);
     });
     tHeadElem.appendChild(trElem);
     histTable.appendChild(tHeadElem);
     const lastIdx = imgHistory.length-1;
-    const firstIdx = (option === "all" ? 0 : imgHistory.length-1);
+    let firstIdx = 0;
+    if (option === "all") {
+        firstIdx = 0;
+    } else if (option === "last") {
+        firstIdx = lastIdx;
+    } else if (option === "ten") {
+        firstIdx = Math.max(0,lastIdx-9);
+    } else {
+        // unanticipated path, but treat like "last"
+        firstIdx = lastIdx;  // TODO - if we move "last" test to end, we can just combine
+    }
     let tBodyElem = document.createElement("tbody");
     for (let row=firstIdx;row<=lastIdx;row++) {
         let histRow = imgHistory[row];
         let rowElem = document.createElement("tr");
-        pushCell(rowElem,histRow.xMin + "+" + histRow.yMin + "i");
+        const yIsNegative = (histRow.yMin < 0);
+        pushCell(rowElem,histRow.xMin + (yIsNegative?" - ":" + ") + Math.abs(histRow.yMin) + "i","center");
         pushCell(rowElem,histRow.realWidth);
-        pushCell(rowElem,histRow.limit);
-        pushCell(rowElem,histRow.canvWidth + " x " + histRow.canvHeight);
-        pushCell(rowElem,histRow.dither);
+        pushCell(rowElem,histRow.limit,"center");
+        pushCell(rowElem,histRow.canvWidth + " x " + histRow.canvHeight,"center");
+        pushCell(rowElem,histRow.dither,"center");
         tBodyElem.appendChild(rowElem);
     }
     histTable.appendChild(tBodyElem);
     histViewElem.appendChild(histTable);
     //
-    function pushCell(tr,cellContent) {
+    function pushCell(tr,cellContent,alignment) {
         let td = document.createElement("td");
         td.textContent = cellContent;
+        if (alignment) {
+            td.setAttribute("align",alignment);
+        }
         tr.appendChild(td);
     }
 }
 
 function getHistoryOption() {
-    return "all";  // TODO - temporary dummy implementation
+    const histSelElem = document.getElementById("histopt");
+    if (!histSelElem) {
+        console.error("no histopt id found on page");
+        return "last";
+    }
+    const val = histSelElem.value;
+    if (!val) {
+        console.error("no value for histopt select found");
+        return "last;"
+    }
+    if (["none","last","ten","all"].includes(val)) {  // Restrict to anticipated values
+        console.log('using valid path');
+        return val
+    } else {
+        console.log('using default last path');
+        return "last";  // otherwise, default to last
+    }
 }
