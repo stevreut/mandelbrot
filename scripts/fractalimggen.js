@@ -296,7 +296,7 @@ function renderHistory() {
         console.error('no histview id on page');
         return;
     }
-    let histTable = document.querySelector(".histview.table");
+    let histTable = document.querySelector("#histview table");
     if (histTable) {
         console.log("removing table at " + (new Date()));
         histTable.remove();
