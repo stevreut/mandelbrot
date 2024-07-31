@@ -60,10 +60,22 @@ p {
     color: #ff0000;
 }
 #histview>table {
+    margin-top: 150px;
+    margin-bottom: 50px;
     border-collapse: collapse;
 }
 #histview td {
-    background-color: #03478c;
-    padding: 2px;
-    border: 1px solid red;
+    background-color: #30495d;
+    padding: 3px;
+    border: 2px solid  #666;
+    color: #c9dbec;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 8pt;
+}
+#histview th {
+    background-color: #5f7585;
+    padding: 5px;
+    border: 2px solid  #666;
+    color: #b1cde9;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
 }
