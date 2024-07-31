@@ -31,7 +31,8 @@ function initCanvasOnly(wid,hgt) {
         canvas.width = wid;
         canvas.height = hgt;
     } else {
-        canvas.width = Math.round(Math.max(MINPIXWID,Math.min(MAXPIXWID,window.screen.availWidth*0.8)));
+        // canvas.width = Math.round(Math.max(MINPIXWID,Math.min(MAXPIXWID,window.screen.availWidth*0.8)));
+        canvas.width = Math.round(Math.max(MINPIXWID,Math.min(MAXPIXWID,window.innerWidth*0.8)));
         canvas.height = Math.round(canvas.width*ASPECTRATIO);
         const pixWidElem = document.getElementById("pixwid");
         if (pixWidElem) {
