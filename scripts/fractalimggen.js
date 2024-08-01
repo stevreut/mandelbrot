@@ -6,6 +6,8 @@ let palette = null;
 let canvasHasListener = false;
 let pixWidthInput = null;
 
+let histSelElem = null;
+
 const ASPECTRATIO = 0.75;
 const MINPIXWID = 120;
 const MAXPIXWID = 800;
@@ -31,9 +33,9 @@ function initCanvasOnly(wid,hgt) {
         canvas.width = wid;
         canvas.height = hgt;
     } else {
-        // canvas.width = Math.round(Math.max(MINPIXWID,Math.min(MAXPIXWID,window.screen.availWidth*0.8)));
-        canvas.width = Math.round(Math.max(MINPIXWID,Math.min(MAXPIXWID,window.innerWidth*0.8)));
-        canvas.height = Math.round(canvas.width*ASPECTRATIO);
+        const canvasDims = dimensionsFromWindowSize();
+        canvas.width = canvasDims.width;
+        canvas.height = canvasDims.height;
         const pixWidElem = document.getElementById("pixwid");
         if (pixWidElem) {
             pixWidElem.value = canvas.width;
@@ -42,6 +44,13 @@ function initCanvasOnly(wid,hgt) {
     // If wid and hgt parameters are not provided then default to pre-existing
     // canvas dimensions, presumably as specified in the HTML
     ctx.fillRect(0,0,(wid?wid:canvas.width),(hgt?hgt:canvas.height));
+}
+
+function dimensionsFromWindowSize() {
+    let dims = {};
+    dims.width = Math.round(Math.max(MINPIXWID,Math.min(MAXPIXWID,window.innerWidth*0.8)));
+    dims.height = Math.round(dims.width*ASPECTRATIO);
+    return dims;
 }
 
 function fractalGenPageInit() {
@@ -65,6 +74,10 @@ function fractalGenPageInit() {
     } else {
         console.error('no pixwid id found - resizing disabled');
     }
+    histSelElem = document.getElementById("histopt");
+    if (histSelElem) {
+        histSelElem.addEventListener("change",renderHistory);
+    }
     setTimeout(()=>drawMandelbrot(-2.3,-1.2,3.2,70),100);
 }
 
@@ -73,7 +86,7 @@ function setPageInitVals() {
     setVal("zoom","2.0");
     setVal("dither","2");
     setVal("histopt","last");
-    setVal("pixwid",Math.round(Math.max(MINPIXWID,Math.min(MAXPIXWID,window.innerWidth*0.8))));
+    setVal("pixwid",(dimensionsFromWindowSize()).width);
     //
     function setVal(id,val) {
         try {
@@ -96,6 +109,8 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
     imgParams.incrPerPixel = realWidth/(imgParams.canvWidth-1);
     imgParams.yMin = yMin;
     imgParams.yMax = yMin + (imgParams.canvHeight-1)*imgParams.incrPerPixel;
+    imgParams.xCtr = (imgParams.xMin+imgParams.xMax)/2;
+    imgParams.yCtr = (imgParams.yMin+imgParams.yMax)/2;
     imgParams.dither = getDitherValue();
     imgParams.subIncr = imgParams.incrPerPixel/imgParams.dither;
     imgParams.subIncrBase = -imgParams.subIncr*(imgParams.dither-1)/2;
@@ -332,7 +347,7 @@ function renderHistory() {
     histTable = document.createElement("table");
     let tHeadElem = document.createElement("thead");
     let trElem = document.createElement("tr");
-    const hdrs = ("Lower-left corner;Width;Limit;Pixel Dimensions;Quality").split(";");
+    const hdrs = ("#;Center Point;Width;Limit;Pixel Dimensions;Quality").split(";");
     hdrs.forEach((val,idx)=>{
         const thElem = document.createElement("th");
         thElem.textContent = val;
@@ -356,39 +371,38 @@ function renderHistory() {
         firstIdx = lastIdx;  // TODO - if we move "last" test to end, we can just combine
     }
     let tBodyElem = document.createElement("tbody");
+    let rowElem = null;
     for (let row=firstIdx;row<=lastIdx;row++) {
         let histRow = imgHistory[row];
-        let rowElem = document.createElement("tr");
+        rowElem = document.createElement("tr");
         const yIsNegative = (histRow.yMin < 0);
-        pushCell(rowElem,histRow.xMin + (yIsNegative?" - ":" + ") + Math.abs(histRow.yMin) + "i","center");
-        pushCell(rowElem,histRow.realWidth);
-        pushCell(rowElem,histRow.limit,"center");
-        pushCell(rowElem,histRow.canvWidth + " x " + histRow.canvHeight,"center");
-        pushCell(rowElem,histRow.dither,"center");
+        pushCell(row+1,"right");
+        pushCell(histRow.xCtr + (yIsNegative?" - ":" + ") + Math.abs(histRow.yCtr) + "i","center");
+        pushCell(histRow.realWidth);
+        pushCell(histRow.limit,"center");
+        pushCell(histRow.canvWidth + " x " + histRow.canvHeight,"center");
+        pushCell(histRow.dither,"center");
         tBodyElem.appendChild(rowElem);
     }
     histTable.appendChild(tBodyElem);
     histViewElem.appendChild(histTable);
     //
-    function pushCell(tr,cellContent,alignment) {
+    function pushCell(cellContent,alignment) {
         let td = document.createElement("td");
         td.textContent = cellContent;
         if (alignment) {
             td.setAttribute("align",alignment);
         }
-        tr.appendChild(td);
+        rowElem.appendChild(td);
     }
 }
 
 function getHistoryOption() {
-    const histSelElem = document.getElementById("histopt");
     if (!histSelElem) {
-        console.error("no histopt id found on page");
         return "last";
     }
     const val = histSelElem.value;
     if (!val) {
-        console.error("no value for histopt select found");
         return "last;"
     }
     if (["none","last","ten","all"].includes(val)) {  // Restrict to anticipated values
