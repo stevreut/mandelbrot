@@ -16,6 +16,8 @@ let imgParams = {};
 
 let imgHistory = [];
 
+let mouseIsDown = false;  // TODO
+
 function initCanvasOnly(wid,hgt) {
     const id = "fractalcanvas";
     canvas = document.getElementById(id);
@@ -100,6 +102,7 @@ function setPageInitVals() {
 }
 
 function drawMandelbrot(xMin,yMin,realWidth,limit) {
+    mouseIsDown = false;  // TODO
     imgParams.limit = limit;
     imgParams.canvWidth = canvas.width;
     imgParams.canvHeight = canvas.height;
@@ -187,8 +190,50 @@ function getDitherValue() {
 }
 
 function addCanvasListener() {
-    canvas.addEventListener("click",(event)=>handleCanvasClick(event));
+    // canvas.addEventListener("click",(event)=>handleCanvasClick(event));
     canvasHasListener = true;
+    canvas.addEventListener("mousedown",()=>{
+        mouseIsDown = true;
+        console.log('mouse is down at ' + (new Date()));
+    });
+    canvas.addEventListener("mouseup",(event)=>{
+        mouseIsDown = false;
+        console.log('mouse is up at ' + (new Date()));
+        console.log('mouse up coords = ' + event.offsetX + ', ' + event.offsetY);
+        handleCanvasClick(event);
+    });
+    canvas.addEventListener("mousemove",(event)=>{
+        // TODO
+        if (mouseIsDown) {
+            showCoords(event);
+        }
+    });
+    //
+    function showCoords(event) {
+        // TODO - come back to this, and try "layered canvas" implementation:
+        // https://stackoverflow.com/questions/3008635/html5-canvas-element-multiple-layers/3008863#3008863
+        const x = event.offsetX;
+        const y = event.offsetY;
+        const pair = '(' + x + ',' + y + ')';
+        console.log('this function will show the coordinates = ' + pair);
+        ctx.beginPath();
+        ctx.strokeStyle = "#ff0000";
+        ctx.lineWidth = 1;
+        ctx.moveTo(x,y-30);
+        ctx.lineTo(x,y-10);
+        ctx.moveTo(x,y+10);
+        ctx.lineTo(x,y+30);
+        ctx.stroke();
+        ctx.beginPath();
+        // ctx.strokeStyle = "#00ff00";
+        // ctx.lineWidth = 5;
+        ctx.moveTo(x-30,y);
+        ctx.lineTo(x-10,y);
+        ctx.moveTo(x+10,y);
+        ctx.lineTo(x+30,y);
+        ctx.stroke();
+        ctx.drawRect()
+    }
 }
 
 function handleCanvasClick(event) {
