@@ -393,6 +393,13 @@ function renderHistory() {
         }
         rowElem.appendChild(td);
     }
+    //
+    function scaledValues(rowElem) {
+        const { xCtr, yCtr, realWidth, canvWidth } = rowElem;
+        const pixPrecision = realWidth/canvWidth;
+        const targetPrecision = pixPrecision/100;  // TODO - "100" subject to review
+        const postDecimal = Math.round(Math.max(-Math.log10(targetPrecision),0));
+    }
 }
 
 function getHistoryOption() {
