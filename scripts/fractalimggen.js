@@ -14,7 +14,7 @@ const MAXPIXWID = 800;
 
 let imgParams = {};
 
-let imgHistory = [];
+let imgHistory = [];  // array of imgParams instances
 
 function initCanvasOnly(wid,hgt) {
     const id = "fractalcanvas";
@@ -360,23 +360,22 @@ function renderHistory() {
     let firstIdx = 0;
     if (option === "all") {
         firstIdx = 0;
-    } else if (option === "last") {
-        firstIdx = lastIdx;
     } else if (option === "ten") {
         firstIdx = Math.max(0,lastIdx-9);
-    } else {
-        // unanticipated path, but treat like "last"
-        firstIdx = lastIdx;  // TODO - if we move "last" test to end, we can just combine
+    } else {  // includes anticipated value "last" as well as defaulting to the same
+        // behavior as "last" if other unanticipated values are encountered.
+        firstIdx = lastIdx;
     }
     let tBodyElem = document.createElement("tbody");
     let rowElem = null;
     for (let row=firstIdx;row<=lastIdx;row++) {
-        let histRow = imgHistory[row];
+        const histRow = imgHistory[row];
         rowElem = document.createElement("tr");
-        const yIsNegative = (histRow.yMin < 0);
+        const { xCtrScaled, yCtrScaled, widthScaled } = scaledValues(histRow);  // TODO
+        const yIsNegative = (yCtrScaled < 0);
         pushCell(row+1,"right");
-        pushCell(histRow.xCtr + (yIsNegative?" - ":" + ") + Math.abs(histRow.yCtr) + "i","center");
-        pushCell(histRow.realWidth);
+        pushCell(xCtrScaled + (yIsNegative?" - ":" + ") + Math.abs(yCtrScaled) + "i","center");
+        pushCell(widthScaled);
         pushCell(histRow.limit,"center");
         pushCell(histRow.canvWidth + " x " + histRow.canvHeight,"center");
         pushCell(histRow.dither,"center");
@@ -397,8 +396,17 @@ function renderHistory() {
     function scaledValues(rowElem) {
         const { xCtr, yCtr, realWidth, canvWidth } = rowElem;
         const pixPrecision = realWidth/canvWidth;
-        const targetPrecision = pixPrecision/100;  // TODO - "100" subject to review
-        const postDecimal = Math.round(Math.max(-Math.log10(targetPrecision),0));
+        const postDecimal = Math.round(Math.max(-Math.log10(pixPrecision),0))+2;
+        return {
+            xCtrScaled : scaleTo(xCtr,postDecimal),
+            yCtrScaled : scaleTo(yCtr,postDecimal),
+            widthScaled : scaleTo(realWidth,postDecimal)
+        };
+        //
+        function scaleTo(val,decShift) {
+            const k = 10**decShift;
+            return Math.round(val*k)/k;
+        }
     }
 }
 
@@ -411,10 +419,8 @@ function getHistoryOption() {
         return "last;"
     }
     if (["none","last","ten","all"].includes(val)) {  // Restrict to anticipated values
-        console.log('using valid path');
         return val
     } else {
-        console.log('using default last path');
         return "last";  // otherwise, default to last
     }
 }
