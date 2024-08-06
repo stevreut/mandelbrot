@@ -125,10 +125,9 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
             // orientation where y values increase from bottom to top,
             // despite the opposing HTML convention.  
         let rowOffset = j*imgParams.canvWidth*4;
-        let pixelOffset = rowOffset-4;  // Note the -4 is deliberate
+        let pixelOffset = rowOffset;
         for (let i=0;i<imgParams.canvWidth;i++) {
             let x = imgParams.xMin+imgParams.incrPerPixel*i;
-            pixelOffset+=4;
             let avgColor;
             if (imgParams.dither === 1) {
                 let count = mandelbrot(x, y, limit);
@@ -152,6 +151,7 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
             imgDataData[pixelOffset+1] = avgColor[1];
             imgDataData[pixelOffset+2] = avgColor[2];
             imgDataData[pixelOffset+3] = 255;
+            pixelOffset+=4;
         }
     }
     imgData.data = imgDataData;
