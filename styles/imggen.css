@@ -9,6 +9,12 @@ h1, h2 {
     text-shadow: 4px 8px 12px rgba(55, 128, 200, 0.6);
     margin-left: 30px;
 }
+h1 {
+    font-size: 36pt;
+}
+h1>img {
+    margin: 0px 15px 0px 0px;
+}
 canvas {
     padding: 2px;
     background-color: #000000;
@@ -102,20 +108,24 @@ em {
     }
     .grpdiv>select {
         /* padding: 0px; */
-        margin: 0px;
+        margin: 0px 0px 10px 0px;
         color: #000000;
         background-color: #89a9c1;
         font-weight: bold;
-        border-radius: 8px;
+        font-size: 14pt;
+        border-radius: 3px;
     }
     .grpdiv>input {
         /* padding: 0px; */
-        margin: 0px;
+        margin: 0px 0px 10px 0px;
         border-radius: 8px;
     }
     button {
-        padding: 3px;
+        padding: 6px;
         font-size: smaller;
+        background-color: #444;
+        border-radius: 3px;
+        margin: 10px 5px 0px 5px;
     }
     .largegrpdiv {
         padding: 20px;
