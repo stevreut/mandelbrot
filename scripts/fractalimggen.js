@@ -118,7 +118,8 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
     const button = document.getElementById("redrawbutton");
     button.disabled = true;
     button.className = "buttnnotavail";
-    const mGrid = getMandelbrotGrid(imgParams);
+    // TODO - re-enable when ready
+    // const mGrid = getMandelbrotGrid(imgParams);
     for (let j=0;j<imgParams.canvHeight;j++) {
         let y = imgParams.yMax-imgParams.incrPerPixel*j;
             // Note subtraction above.  This 
@@ -185,6 +186,35 @@ function getMandelbrotGrid(imgp) {  // TODO : imgp = imgParams
         }
     }
     return mGrid;
+}
+
+function paintGridToCanvas(mGrid,imgp) {
+    // TODO - maybe check imgp dimensions against mGrid dimensions here?
+    const imgData = ctx.getImageData(0,0,canvas.width,canvas.height);  // TODO - reconcile with imgp dimensions
+    const imgDataData = imgData.data;
+    const m2 = imgp.dither**(-2);
+    let gridIdx = 0;
+    for (let j=0;j<imgp.canvHeight;j++) {
+        let rowOffset = j*imgp.canvWidth*4;
+        let pixelOffset = rowOffset;
+        for (let i=0;i<imgp.canvWidth;i++) {
+            const avgColor = [0,0,0];
+            const localCounts = mGrid.countsForPixel[gridIdx];
+            localCounts.forEach((count)=>{
+                const color = colorFromCount(count, limit);
+                avgColor.forEach((d,idx)=>avgColor[idx]+=color[idx]);
+            })
+            // TODO
+            avgColor.forEach((val,idx)=>avgColor[idx]=Math.round(val*m2));
+            avgColor.forEach((val,idx)=>imgDataData[pixelOffset+idx]=val);
+            // TODO
+            imgDataData[pixelOffset+3] = 255;
+            pixelOffset+=4;
+            gridIdx++;
+        }
+    }
+    imgData.data = imgDataData;
+    ctx.putImageData(imgData,0,0);
 }
 
 function getDitherValue() {
