@@ -134,6 +134,11 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
                 for (let jj=0;jj<imgParams.dither;jj++) {
                     const count = mandelbrot(x+imgParams.subIncrBase+ii*imgParams.subIncr,
                         y+imgParams.subIncrBase+jj*imgParams.subIncr,limit);
+                    if (count < 0 || count > limit) {
+                        console.error('count ' + count + ' outside of range');
+                    } else {
+                        countsHistogram[count]++;
+                    }
                     const color = colorFromCount(count, limit);
                     avgColor.forEach((d,idx)=>avgColor[idx]+=color[idx]);
                 }
