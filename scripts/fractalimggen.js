@@ -12,11 +12,14 @@ const ASPECTRATIO = 0.75;
 const MINPIXWID = 120;
 const MAXPIXWID = 800;
 
-const imgParams = {};
+const imgParams = {}; // object containing all parameters (other than
+                      // palette) needed to calculate image data
 
 let imgHistory = [];  // array of imgParams instances
 
 function initCanvasOnly(wid,hgt) {
+    // Initialize the canvas in the DOM and set the corresponding
+    // context (ctx) but do not draw the Mandelbrot image on it.
     const id = "fractalcanvas";
     canvas = document.getElementById(id);
     if (!canvas) {
@@ -28,32 +31,42 @@ function initCanvasOnly(wid,hgt) {
         console.error('unable to obtain 2d context from canvas ' + id);
         return;
     }
-    ctx.fillStyle = "#000000";
+    ctx.fillStyle = "#000000";  // black
     if ((wid)&&(hgt)) {
+        // If BOTH dimensions are provided as parameters then use these
+        // to set the canvas dimensions
         canvas.width = wid;
         canvas.height = hgt;
     } else {
+        // Otherwise, get canvas dimensions calculated based on window size.
         const canvasDims = dimensionsFromWindowSize();
         canvas.width = canvasDims.width;
         canvas.height = canvasDims.height;
         const pixWidElem = document.getElementById("pixwid");
         if (pixWidElem) {
+            // Set the value shown in the input box to match
+            // the width of the canvas.
             pixWidElem.value = canvas.width;
         }
     }
+    // Draw initial opaque black background
     ctx.fillRect(0,0,canvas.width,canvas.height);
 }
 
 function dimensionsFromWindowSize() {
     const dims = {};
+    // Width is 80% of window width, but not less than MINPIXWID nor more than MAXPIXWID.
     dims.width = Math.round(Math.max(MINPIXWID,Math.min(MAXPIXWID,window.innerWidth*0.8)));
+    // Height set from width so that aspect ratio stays constant
     dims.height = Math.round(dims.width*ASPECTRATIO);
     return dims;
 }
 
 function fractalGenPageInit() {
-    imgHistory = [];
-    initCanvasOnly();
+    // Initializes the DOM and draws Mandelbrot image using initial
+    // default parameters.
+    imgHistory = [];  // Start with empty history of images
+    initCanvasOnly(); // Initialize the HTML canvas element that will contain the Mandelbrot image
     const drawButton = document.getElementById("redrawbutton");
     if (drawButton) {
         drawButton.addEventListener("click",()=>{
@@ -63,7 +76,7 @@ function fractalGenPageInit() {
     }
     const resetButton = document.getElementById("resetbutton");
     if (resetButton) {
-        setPageInitVals();
+        setPageInitVals();  // Set initial default input values on page
         resetButton.addEventListener("click",fractalGenPageInit);
     }
     pixWidthInput = document.getElementById("pixwid");
@@ -76,10 +89,13 @@ function fractalGenPageInit() {
     if (histSelElem) {
         histSelElem.addEventListener("change",renderHistory);
     }
+    // After a brief time-out, draw the initial Mandelbrot image with default
+    // parameters.
     setTimeout(()=>drawMandelbrot(-2.3,-1.2,3.2,70),100);
 }
 
 function setPageInitVals() {
+    // Sets initial default values for various input elements
     setVal("lim",70);
     setVal("zoom","2.0");
     setVal("dither","2");
@@ -87,6 +103,8 @@ function setPageInitVals() {
     setVal("pixwid",(dimensionsFromWindowSize()).width);
     //
     function setVal(id,val) {
+        // Sets the value of an input element after looking it up
+        // based in 'id'
         try {
             (document.getElementById(id)).value = val;
         } catch (err) {
@@ -98,6 +116,19 @@ function setPageInitVals() {
 }
 
 function drawMandelbrot(xMin,yMin,realWidth,limit) {
+    // Draws Mandelbrot Set on canvas element based on
+    // coordinates (real and imaginary) of lower-left corner of 
+    // image, width of selected section (along real axis), and a count
+    // limit.  (Note that height is inferred from realWidth in based on
+    // aspect ration.)
+    // 
+    // Steps in processing are: (1) set values in 'imgParams' object,
+    // (2) get counts for each pixel via getMandelbrotGrid(), (3) paint
+    // the results to the canvas by converting each pixels set of counts
+    // to a color based on the currently active palette (paintGridToCanvas()),
+    // (4) append a clone of imgParams to the cumulative history (imgHistory)
+    // of rendered Mandelbrot images, and (5) display none, some, or all of that
+    // history on the page (renderHistory()).
     imgParams.limit = limit;
     imgParams.canvWidth = canvas.width;
     imgParams.canvHeight = canvas.height;
@@ -112,43 +143,13 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
     imgParams.dither = getDitherValue();
     imgParams.subIncr = imgParams.incrPerPixel/imgParams.dither;
     imgParams.subIncrBase = -imgParams.subIncr*(imgParams.dither-1)/2;
-    const imgData = ctx.getImageData(0,0,canvas.width,canvas.height);
-    const imgDataData = imgData.data;
-    const m2 = imgParams.dither**(-2);
     const button = document.getElementById("redrawbutton");
     button.disabled = true;
     button.className = "buttnnotavail";
-    // TODO - re-enable when ready
-    // const mGrid = getMandelbrotGrid(imgParams);
-    for (let j=0;j<imgParams.canvHeight;j++) {
-        let y = imgParams.yMax-imgParams.incrPerPixel*j;
-            // Note subtraction above.  This 
-            // introduces the standard Cartesian coordinate
-            // orientation where y values increase from bottom to top,
-            // despite the opposing HTML convention.  
-        let rowOffset = j*imgParams.canvWidth*4;
-        let pixelOffset = rowOffset;
-        for (let i=0;i<imgParams.canvWidth;i++) {
-            let x = imgParams.xMin+imgParams.incrPerPixel*i;
-            const avgColor = [0,0,0];
-            for (let ii=0;ii<imgParams.dither;ii++) {
-                for (let jj=0;jj<imgParams.dither;jj++) {
-                    const count = mandelbrot(x+imgParams.subIncrBase+ii*imgParams.subIncr,
-                        y+imgParams.subIncrBase+jj*imgParams.subIncr,limit);
-                    const color = colorFromCount(count, limit);
-                    avgColor.forEach((d,idx)=>avgColor[idx]+=color[idx]);
-                }
-            }
-            avgColor.forEach((val,idx)=>avgColor[idx]=Math.round(val*m2));
-            avgColor.forEach((val,idx)=>imgDataData[pixelOffset+idx]=val);
-            imgDataData[pixelOffset+3] = 255;
-            pixelOffset+=4;
-        }
-    }
-    imgData.data = imgDataData;
+    const mGrid = getMandelbrotGrid(imgParams);
+    paintGridToCanvas(mGrid,imgParams);
     const imgParamsClone = Object.assign({},imgParams);  // shallow clone of imgParams
     imgHistory.push(imgParamsClone);
-    ctx.putImageData(imgData,0,0);
     renderHistory();
     if (!canvasHasListener) {
         addCanvasListener();
@@ -201,13 +202,11 @@ function paintGridToCanvas(mGrid,imgp) {
             const avgColor = [0,0,0];
             const localCounts = mGrid.countsForPixel[gridIdx];
             localCounts.forEach((count)=>{
-                const color = colorFromCount(count, limit);
+                const color = colorFromCount(count, imgp.limit);
                 avgColor.forEach((d,idx)=>avgColor[idx]+=color[idx]);
             })
-            // TODO
             avgColor.forEach((val,idx)=>avgColor[idx]=Math.round(val*m2));
             avgColor.forEach((val,idx)=>imgDataData[pixelOffset+idx]=val);
-            // TODO
             imgDataData[pixelOffset+3] = 255;
             pixelOffset+=4;
             gridIdx++;
