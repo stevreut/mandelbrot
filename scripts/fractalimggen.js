@@ -12,7 +12,7 @@ const ASPECTRATIO = 0.75;
 const MINPIXWID = 120;
 const MAXPIXWID = 800;
 
-let imgParams = {};
+const imgParams = {};
 
 let imgHistory = [];  // array of imgParams instances
 
@@ -45,7 +45,7 @@ function initCanvasOnly(wid,hgt) {
 }
 
 function dimensionsFromWindowSize() {
-    let dims = {};
+    const dims = {};
     dims.width = Math.round(Math.max(MINPIXWID,Math.min(MAXPIXWID,window.innerWidth*0.8)));
     dims.height = Math.round(dims.width*ASPECTRATIO);
     return dims;
@@ -54,14 +54,14 @@ function dimensionsFromWindowSize() {
 function fractalGenPageInit() {
     imgHistory = [];
     initCanvasOnly();
-    let drawButton = document.getElementById("redrawbutton");
+    const drawButton = document.getElementById("redrawbutton");
     if (drawButton) {
         drawButton.addEventListener("click",()=>{
-            let lim = parseInt((document.getElementById("lim")).value);
+            const lim = parseInt((document.getElementById("lim")).value);
             drawMandelbrot(imgParams.xMin,imgParams.yMin,imgParams.realWidth,lim);
         });
     }
-    let resetButton = document.getElementById("resetbutton");
+    const resetButton = document.getElementById("resetbutton");
     if (resetButton) {
         setPageInitVals();
         resetButton.addEventListener("click",fractalGenPageInit);
@@ -114,10 +114,11 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
     imgParams.subIncrBase = -imgParams.subIncr*(imgParams.dither-1)/2;
     const imgData = ctx.getImageData(0,0,canvas.width,canvas.height);
     const imgDataData = imgData.data;
-    let m2 = imgParams.dither**(-2);
-    let button = document.getElementById("redrawbutton");
+    const m2 = imgParams.dither**(-2);
+    const button = document.getElementById("redrawbutton");
     button.disabled = true;
     button.className = "buttnnotavail";
+    let countsHistogram = new Array(limit+1).fill(0);
     for (let j=0;j<imgParams.canvHeight;j++) {
         let y = imgParams.yMax-imgParams.incrPerPixel*j;
             // Note subtraction above.  This 
@@ -128,22 +129,16 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
         let pixelOffset = rowOffset;
         for (let i=0;i<imgParams.canvWidth;i++) {
             let x = imgParams.xMin+imgParams.incrPerPixel*i;
-            let avgColor;
-            if (imgParams.dither === 1) {
-                let count = mandelbrot(x, y, limit);
-                avgColor = colorFromCount(count, limit);
-            } else {
-                avgColor = [0,0,0];
-                for (let ii=0;ii<imgParams.dither;ii++) {
-                    for (let jj=0;jj<imgParams.dither;jj++) {
-                        let count = mandelbrot(x+imgParams.subIncrBase+ii*imgParams.subIncr,
-                            y+imgParams.subIncrBase+jj*imgParams.subIncr,limit);
-                        let color = colorFromCount(count, limit);
-                        avgColor.forEach((d,idx)=>avgColor[idx]+=color[idx]);
-                    }
+            const avgColor = [0,0,0];
+            for (let ii=0;ii<imgParams.dither;ii++) {
+                for (let jj=0;jj<imgParams.dither;jj++) {
+                    const count = mandelbrot(x+imgParams.subIncrBase+ii*imgParams.subIncr,
+                        y+imgParams.subIncrBase+jj*imgParams.subIncr,limit);
+                    const color = colorFromCount(count, limit);
+                    avgColor.forEach((d,idx)=>avgColor[idx]+=color[idx]);
                 }
-                avgColor.forEach((val,idx)=>avgColor[idx]=Math.round(val*m2));
             }
+            avgColor.forEach((val,idx)=>avgColor[idx]=Math.round(val*m2));
             avgColor.forEach((val,idx)=>imgDataData[pixelOffset+idx]=val);
             imgDataData[pixelOffset+3] = 255;
             pixelOffset+=4;
@@ -163,7 +158,7 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
 
 function getDitherValue() {
     try {
-        let ditherElem = document.getElementById("dither");
+        const ditherElem = document.getElementById("dither");
         if (!ditherElem) {
             throw 'no dither element found';
         }
@@ -201,14 +196,14 @@ function handleCanvasClick(event) {
             console.error('error parsing reduction factor - using 2.0, err = ', err);
         }
     }
-    let i = event.offsetX;
-    let j = event.offsetY;
-    let newCtrX = imgParams.xMin + imgParams.incrPerPixel*i;
-    let newCtrY = imgParams.yMax - imgParams.incrPerPixel*j;
-    let newRealWidth = imgParams.realWidth/zoomFactor;
-    let newXmin = newCtrX - newRealWidth/2;
-    let newYmin = newCtrY - newRealWidth*(imgParams.canvHeight/imgParams.canvWidth)/2;
-    let limElem = document.getElementById("lim");
+    const i = event.offsetX;
+    const j = event.offsetY;
+    const newCtrX = imgParams.xMin + imgParams.incrPerPixel*i;
+    const newCtrY = imgParams.yMax - imgParams.incrPerPixel*j;
+    const newRealWidth = imgParams.realWidth/zoomFactor;
+    const newXmin = newCtrX - newRealWidth/2;
+    const newYmin = newCtrY - newRealWidth*(imgParams.canvHeight/imgParams.canvWidth)/2;
+    const limElem = document.getElementById("lim");
     let newLimit = null;
     if (limElem) {
         newLimit = parseInt(limElem.value);
@@ -228,9 +223,9 @@ function mandelbrot(x, y, limit) {
     let r2 = 0;
     let count = -1;
     while (count < limit && r2 < limR2) {
-        let u2 = u*u;
-        let v2 = v*v;
-        let newU = u2 - v2 + x;
+        const u2 = u*u;
+        const v2 = v*v;
+        const newU = u2 - v2 + x;
         v = 2*u*v + y;
         u = newU;
         r2 = u2 + v2;
@@ -264,7 +259,7 @@ function setPalette() {
     palette = [];
     const SZ = 256;
     for (let i=0;i<SZ;i++) {
-        let theta = i*2*Math.PI/SZ;
+        const theta = i*2*Math.PI/SZ;
         let c = colorOfAngle(theta);
         if (i%2===0) {
             c = c.map((val)=>Math.round(val*0.93));  // TODO
@@ -295,7 +290,7 @@ function setPalette() {
 
 function handlePixWidChange(event) {
     const saveWidth = imgParams.canvWidth;
-    let newWidStr = pixWidthInput.value.trim();
+    const newWidStr = pixWidthInput.value.trim();
     try {
         const newWid = parseInt(newWidStr);
         if (typeof newWid == 'number' && !Number.isNaN(newWid) && newWid > 3) {
@@ -339,8 +334,8 @@ function renderHistory() {
         return;
     }
     histTable = document.createElement("table");
-    let tHeadElem = document.createElement("thead");
-    let trElem = document.createElement("tr");
+    const tHeadElem = document.createElement("thead");
+    const trElem = document.createElement("tr");
     const hdrs = ("#;Center Point;Width;Limit;Pixel Dimensions;Quality").split(";");
     hdrs.forEach((val,idx)=>{
         const thElem = document.createElement("th");
@@ -362,7 +357,7 @@ function renderHistory() {
         // behavior as "last" if other unanticipated values are encountered.
         firstIdx = lastIdx;
     }
-    let tBodyElem = document.createElement("tbody");
+    const tBodyElem = document.createElement("tbody");
     let rowElem = null;
     for (let row=firstIdx;row<=lastIdx;row++) {
         const histRow = imgHistory[row];
@@ -381,7 +376,7 @@ function renderHistory() {
     histViewElem.appendChild(histTable);
     //
     function pushCell(cellContent,alignment) {
-        let td = document.createElement("td");
+        const td = document.createElement("td");
         td.textContent = cellContent;
         if (alignment) {
             td.setAttribute("align",alignment);
