@@ -12,6 +12,8 @@ const ASPECTRATIO = 0.75;
 const MINPIXWID = 120;
 const MAXPIXWID = 800;
 
+let mGrid = null;
+
 const imgParams = {}; // object containing all parameters (other than
                       // palette) needed to calculate image data
 
@@ -89,6 +91,21 @@ function fractalGenPageInit() {
     if (histSelElem) {
         histSelElem.addEventListener("change",renderHistory);
     }
+    const paletteSizeInput = document.getElementById("palettesize");
+    if (paletteSizeInput) {
+        const paletteSize = parseInt(paletteSizeInput.value);
+        setPalette(paletteSize,(paletteSize%2===0) /* TODO */);
+        paletteSizeInput.addEventListener("change",()=>{
+            let sz = parseInt(paletteSizeInput.value);
+            let isToggle = (sz%2 === 0);
+            setPalette(sz, isToggle /* TODO */);
+            if (mGrid) {
+                paintGridToCanvas(mGrid,imgParams);
+            }    
+        });
+    } else {
+        console.error('no palettesize id found - defaulting to 256');
+    }
     // After a brief time-out, draw the initial Mandelbrot image with default
     // parameters.
     setTimeout(()=>drawMandelbrot(-2.3,-1.2,3.2,70),100);
@@ -101,6 +118,7 @@ function setPageInitVals() {
     setVal("dither","2");
     setVal("histopt","last");
     setVal("pixwid",(dimensionsFromWindowSize()).width);
+    setVal("palettesize",256);
     //
     function setVal(id,val) {
         // Sets the value of an input element after looking it up
@@ -146,7 +164,7 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
     const button = document.getElementById("redrawbutton");
     button.disabled = true;
     button.className = "buttnnotavail";
-    const mGrid = getMandelbrotGrid(imgParams);
+    mGrid = getMandelbrotGrid(imgParams);
     paintGridToCanvas(mGrid,imgParams);
     const imgParamsClone = Object.assign({},imgParams);  // shallow clone of imgParams
     imgHistory.push(imgParamsClone);
@@ -307,7 +325,7 @@ function colorFromCount(count, limit) {
     }
 }
 
-function setPalette() {
+function setPalette(size,doToggle) {
     // Sets the global 'palette' variable to be an array of 256 (for now) 
     // 'colors'; however, these colors are actually nested arrays each having
     // three integer values.  These values could later be converted to
@@ -316,12 +334,22 @@ function setPalette() {
     // greater flexibility in making use of these colors - particularly with
     // respect to further mathematical manipulation of the primary values
     // when desired.
+    console.log('setPalette initial params: size = ', size, ' doToggle = ', doToggle);
     palette = [];
-    const SZ = 256;
-    for (let i=0;i<SZ;i++) {
-        const theta = i*2*Math.PI/SZ;
+    if (size) {
+        size = Math.max(size,2);
+        size = Math.min(size,32768);
+    } else {
+        size = 256;  // default
+    }
+    if (doToggle == null || typeof doToggle != 'boolean') {
+        doToggle = true;
+    }
+    console.log('setPalette final params: size = ', size, ' doToggle = ', doToggle);
+    for (let i=0;i<size;i++) {
+        const theta = i*2*Math.PI/size;
         let c = colorOfAngle(theta);
-        if (i%2===0) {
+        if (doToggle && i%2===0) {
             c = c.map((val)=>Math.round(val*0.93));  // TODO
         }
         palette.push(c);
