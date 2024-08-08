@@ -139,17 +139,12 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
                         let count = mandelbrot(x+imgParams.subIncrBase+ii*imgParams.subIncr,
                             y+imgParams.subIncrBase+jj*imgParams.subIncr,limit);
                         let color = colorFromCount(count, limit);
-                        // TODO - forEach() or similar method could be used here - TBD
-                        for (let kk=0;kk<3;kk++) {
-                            avgColor[kk]+=color[kk];
-                        }
+                        avgColor.forEach((d,idx)=>avgColor[idx]+=color[idx]);
                     }
                 }
-                avgColor.forEach((val,idx)=>{avgColor[idx]=Math.round(val*m2)});  // TODO - refine use of forEach() to use 'this'
+                avgColor.forEach((val,idx)=>avgColor[idx]=Math.round(val*m2));
             }
-            imgDataData[pixelOffset] = avgColor[0];
-            imgDataData[pixelOffset+1] = avgColor[1];
-            imgDataData[pixelOffset+2] = avgColor[2];
+            avgColor.forEach((val,idx)=>imgDataData[pixelOffset+idx]=val);
             imgDataData[pixelOffset+3] = 255;
             pixelOffset+=4;
         }
@@ -230,14 +225,15 @@ function mandelbrot(x, y, limit) {
     let u = x;
     let v = y;
     const limR2 = 12;
-    let r2 = x*x+y*y;
-    let count = 0;
+    let r2 = 0;
+    let count = -1;
     while (count < limit && r2 < limR2) {
-        let newU = u*u-v*v + x;
-        let newV = 2*u*v + y;
+        let u2 = u*u;
+        let v2 = v*v;
+        let newU = u2 - v2 + x;
+        v = 2*u*v + y;
         u = newU;
-        v = newV;
-        r2 = u*u+v*v;
+        r2 = u2 + v2;
         count++;
     }
     return count;
