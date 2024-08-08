@@ -118,7 +118,7 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
     const button = document.getElementById("redrawbutton");
     button.disabled = true;
     button.className = "buttnnotavail";
-    let countsHistogram = new Array(limit+1).fill(0);
+    const mGrid = getMandelbrotGrid(imgParams);
     for (let j=0;j<imgParams.canvHeight;j++) {
         let y = imgParams.yMax-imgParams.incrPerPixel*j;
             // Note subtraction above.  This 
@@ -134,11 +134,6 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
                 for (let jj=0;jj<imgParams.dither;jj++) {
                     const count = mandelbrot(x+imgParams.subIncrBase+ii*imgParams.subIncr,
                         y+imgParams.subIncrBase+jj*imgParams.subIncr,limit);
-                    if (count < 0 || count > limit) {
-                        console.error('count ' + count + ' outside of range');
-                    } else {
-                        countsHistogram[count]++;
-                    }
                     const color = colorFromCount(count, limit);
                     avgColor.forEach((d,idx)=>avgColor[idx]+=color[idx]);
                 }
@@ -159,6 +154,37 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
     }
     button.disabled = false;
     button.className = "buttnavail";
+}
+
+function getMandelbrotGrid(imgp) {  // TODO : imgp = imgParams
+    let mGrid = {};
+    mGrid.countsHistogram = new Array(imgp.limit+1).fill(0);
+    mGrid.width = imgp.canvWidth;
+    mGrid.height = imgp.canvHeight;
+    mGrid.countsForPixel = [];
+    let pixelNum = -1;
+    for (let j=0;j<imgp.canvHeight;j++) {
+        let y = imgp.yMax-imgp.incrPerPixel*j;
+        for (let i=0;i<imgp.canvWidth;i++) {
+            pixelNum++;
+            let x = imgp.xMin+imgp.incrPerPixel*i;
+            let localCountArray = [];
+            for (let ii=0;ii<imgp.dither;ii++) {
+                for (let jj=0;jj<imgp.dither;jj++) {
+                    const count = mandelbrot(x+imgp.subIncrBase+ii*imgp.subIncr,
+                        y+imgp.subIncrBase+jj*imgp.subIncr,imgp.limit);
+                    if (count < 0 || count > imgp.limit) {
+                        console.error('count ' + count + ' outside of range');
+                    } else {
+                        mGrid.countsHistogram[count]++;
+                        localCountArray.push(count);
+                    }
+                }
+            }
+            mGrid.countsForPixel[pixelNum] = localCountArray;
+        }
+    }
+    return mGrid;
 }
 
 function getDitherValue() {
