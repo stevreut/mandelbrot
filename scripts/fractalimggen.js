@@ -3,6 +3,7 @@ window.addEventListener("load",fractalGenPageInit);
 let canvas = null;
 let ctx = null;  // canvas 2D context
 let palette = null;
+let altPalette = null;
 let canvasHasListener = false;
 let pixWidthInput = null;
 
@@ -100,7 +101,7 @@ function fractalGenPageInit() {
             let isToggle = (sz%2 === 0);
             setPalette(sz, isToggle /* TODO */);
             if (mGrid) {
-                paintGridToCanvas(mGrid,imgParams);
+                paintGridToCanvas(mGrid,imgParams,true);
             }    
         });
     } else {
@@ -165,7 +166,7 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
     button.disabled = true;
     button.className = "buttnnotavail";
     mGrid = getMandelbrotGrid(imgParams);
-    paintGridToCanvas(mGrid,imgParams);
+    paintGridToCanvas(mGrid,imgParams,true);
     const imgParamsClone = Object.assign({},imgParams);  // shallow clone of imgParams
     imgHistory.push(imgParamsClone);
     renderHistory();
@@ -207,7 +208,7 @@ function getMandelbrotGrid(imgp) {  // TODO : imgp = imgParams
     return mGrid;
 }
 
-function paintGridToCanvas(mGrid,imgp) {
+function paintGridToCanvas(mGrid,imgp,useStandardPalette) {
     // TODO - maybe check imgp dimensions against mGrid dimensions here?
     const imgData = ctx.getImageData(0,0,canvas.width,canvas.height);  // TODO - reconcile with imgp dimensions
     const imgDataData = imgData.data;
@@ -220,7 +221,7 @@ function paintGridToCanvas(mGrid,imgp) {
             const avgColor = [0,0,0];
             const localCounts = mGrid.countsForPixel[gridIdx];
             localCounts.forEach((count)=>{
-                const color = colorFromCount(count, imgp.limit);
+                const color = colorFromCount(count, imgp.limit, useStandardPalette);
                 avgColor.forEach((d,idx)=>avgColor[idx]+=color[idx]);
             })
             avgColor.forEach((val,idx)=>avgColor[idx]=Math.round(val*m2));
@@ -312,7 +313,7 @@ function mandelbrot(x, y, limit) {
     return count;
 }
 
-function colorFromCount(count, limit) {
+function colorFromCount(count, limit, useStandard) {
     // Returns an array representing a color.  See setPalette() for
     // a more detailed explanation.
     if (count >= limit) {
@@ -321,7 +322,11 @@ function colorFromCount(count, limit) {
         if (!palette) {
             setPalette();
         }
-        return palette[(Math.floor(count)%(palette.length))];
+        if (useStandard) {
+            return palette[(Math.floor(count)%(palette.length))];
+        } else {
+            return altPalette[(Math.floor(count)%(altPalette.length))];
+        }
     }
 }
 
@@ -336,6 +341,7 @@ function setPalette(size,doToggle) {
     // when desired.
     console.log('setPalette initial params: size = ', size, ' doToggle = ', doToggle);
     palette = [];
+    altPalette = [];
     if (size) {
         size = Math.max(size,2);
         size = Math.min(size,32768);
@@ -348,27 +354,40 @@ function setPalette(size,doToggle) {
     console.log('setPalette final params: size = ', size, ' doToggle = ', doToggle);
     for (let i=0;i<size;i++) {
         const theta = i*2*Math.PI/size;
-        let c = colorOfAngle(theta);
+        let c = colorOfAngle(theta, true);
         if (doToggle && i%2===0) {
             c = c.map((val)=>Math.round(val*0.93));  // TODO
         }
         palette.push(c);
+        let c2 = colorOfAngle(theta, false);
+        altPalette.push(c2);
     }
-    function colorOfAngle(th) {
+    function colorOfAngle(th, useStandard) {
         // Returns an array of three primary color values, each of
         // which is an integer from 0 to 255.  These returned
         // arrays can be used to determine a corresponding
         // HTML color value (e.g. "#RRGGBB").
         let colr = [];
         for (let i=2;i>=0;i--) {
-            colr.push(hexCol(th+i));
+            if (useStandard) {
+                colr.push(hexCol(th+i, false));
+            } else {
+                colr.push(hexCol(th, true));
+            }
+        }
+        if (colr.length != 3 && useStandard) {  // TODO - test code only
+            console.log('colr len = ', colr.length, ' for th=', th, ' use=', useStandard);
         }
         return colr;
-        function hexCol(th) {
+        //
+        function hexCol(th, isMuted) {
             // Returns a primary color value (an integer in the range
             // from 0 to 255) based on the ("theta") an angle somewhat
             // akin to a hue value
             let val = (Math.cos(th)+1)/2;
+            if (isMuted) {
+                val = val*0.3+0.35;
+            }
             val = Math.floor(val*256);
             val = Math.max(0,Math.min(255,val));
             return val;
