@@ -91,24 +91,33 @@ relatively simple *function mandelbrot()* within Javascript file [fractalimggen.
 
 The following are all possible or likely enhancements to this tool:
 
-<!-- * Direct setting of pixel values (Currently pixels are set via canvas fillRect() 
-function but canvas enables direct (and more efficient) manipulation of the pixel
-primary color byte values.) -->
-<!-- * "Responsive" formatting for smart phones and other smaller devices -->
+* Detailed usage/instruction page
+* Associated page that demonstrates some of the underlying mathematics:
+    * Iterated functions (with demo)
+    * Intro to complex numbers (with demo)
+    * Mandelbrot and Julia iteration demonstration (with user-enabled demo)
+* Enable (optional) input of image parameters
+* Show histogram of count frequencies 
 * Julia Set mode
-* Display of image parameters on screen
-* Policing values in inputs on entry
+* Enable higher-precision calculation
+    * Import or write high-precision JS class
+* Policing of values in inputs on entry
 * Tracking of cursor / boxing of selected image
 * Better management of asynchronous processing - ability to stop processing and
 perhaps a status bar for images that take more than a few seconds to generate
 * Local tracking history of images generated (local storage, cookies)
-* [possibly] remote tracking of images generated (would required cloud or other host support)
+* [possibly] remote tracking of images generated (would require cloud or other host support)
 * Exportable animation generation
 * Ability to customize color palette
+    * Phase I - simple phase/amplitude/frequence selection
+    * Phase II - add customization of individual pixels
+    * Phase III - meta-language for precise control (module)
+    * Phase IV - allow persistence of palette(s)
 * Allow user the ability to define other iterative functions (i.e. generate
 images of other iterative fractals besides Mandelbrot and Julia)
 * Auxiliary page(s) explaining and **demonstrating** the nature of the Mandelbrot Set
 and perhaps related mathematical objects
+* React JS [possibly]
 
 # License.
 
