@@ -93,7 +93,7 @@ em {
     font-family:Verdana, Geneva, Tahoma, sans-serif;
 }
 .shortish {
-    width: 8em;
+    width: 5em;
 }
 @media only screen and (max-width: 800px) {
     .grpdiv {
