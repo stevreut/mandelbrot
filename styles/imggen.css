@@ -55,7 +55,7 @@ button.buttnnotavail {
 .grpdiv>select {
     padding: 5px;
     color: #000000;
-    background-color: #89a9c1;
+    background-color: #b696c6;
     font-weight: bold;
 }
 p {
@@ -91,6 +91,9 @@ em {
     border: 2px solid  #666;
     color: #b1cde9;
     font-family:Verdana, Geneva, Tahoma, sans-serif;
+}
+.shortish {
+    width: 8em;
 }
 @media only screen and (max-width: 800px) {
     .grpdiv {

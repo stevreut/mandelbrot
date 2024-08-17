@@ -13,11 +13,11 @@
     <div class="largegrpdiv">
         <div class="grpdiv">
             <label for="lim">Iteration Limit</label>
-            <input type="number" min="0" step="1" id="lim" value="70"/>
+            <input type="number" min="0" max="9999999" step="1" id="lim" value="70"/>
         </div>
         <div class="grpdiv">
             <label for="zoom">Zoom Factor</label>
-            <input type="number" min="0" id="zoom" value="2.0" step="0.1"/>
+            <input type="number" min="0" id="zoom" value="2.0" step="0.1" class="shortish"/>
         </div>
         <div class="grpdiv">
             <label for="pixwid">Width in Pixels</label>
@@ -35,7 +35,9 @@
         </div>
         <div class="grpdiv">
             <label for="palettesize">Size of Palette</label>
-            <input type="number" min="2" max="32768" step="1" id="palettesize" value="256"/>
+            <input type="number" min="2" max="32767" step="1" id="palettesize" value="256"/>
+            <label for="paletteoffset">Palette Offset</label>
+            <input type="number" step="1" id="paletteoffset" value="0" class="shortish"/>
         </div>
         <div>
             <button id="redrawbutton" class="buttnavail">Redraw</button>
@@ -45,9 +47,9 @@
             <label for="histopt">History Viewing Options</label>
             <select id="histopt">
                 <option value="none">none</option>
-                <option value="last" selected="selected">last image only</option>
-                <option value="ten">last ten images</option>
-                <option value="all">entire image history for this session</option>
+                <option value="last" selected="selected">last image</option>
+                <option value="ten">last 10 images</option>
+                <option value="all">all images</option>
             </select>
         </div>
     </div>
