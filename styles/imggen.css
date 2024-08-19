@@ -115,6 +115,7 @@ em {
         border-style: none;
         margin-top: 3px;
         margin-bottom: 2px;
+        white-space: nowrap;
     }
     .grpdiv>label {
         /* padding: 1px; */

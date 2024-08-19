@@ -95,23 +95,6 @@ function fractalGenPageInit() {
     (document.getElementById("palettesize")).addEventListener("change",handlePaletteChange);
     (document.getElementById("paletteoffset")).addEventListener("change",handlePaletteChange);
     handlePaletteChange();
-    // const paletteSizeInput = document.getElementById("palettesize");
-    // if (paletteSizeInput) {
-    //     const paletteSize = parseInt(paletteSizeInput.value);
-    //     setPalette(paletteSize,(paletteSize%2===0) /* TODO */);
-    //     paletteSizeInput.addEventListener("change",()=>{
-    //         let sz = parseInt(paletteSizeInput.value);
-    //         let isToggle = (sz%2 === 0);
-    //         setPalette(sz, isToggle /* TODO */);
-    //         if (mGrid) {
-    //             paintGridToCanvas(mGrid,imgParams,true);
-    //         }    
-    //     });
-    // } else {
-    //     console.error('no palettesize id found - defaulting to 256');
-    // }
-    // After a brief time-out, draw the initial Mandelbrot image with default
-    // parameters.
     setTimeout(()=>drawMandelbrot(-2.3,-1.2,3.2,70),100);
 }
 
@@ -373,7 +356,6 @@ function setPalette(size,offset,doToggle) {
     // greater flexibility in making use of these colors - particularly with
     // respect to further mathematical manipulation of the primary values
     // when desired.
-    console.log('setPalette initial params: size = ', size, ' doToggle = ', doToggle);
     palette = [];
     altPalette = [];
     const PHASEMX = 360;
@@ -393,7 +375,6 @@ function setPalette(size,offset,doToggle) {
     if (doToggle == null || typeof doToggle != 'boolean') {
         doToggle = true;
     }
-    console.log('setPalette final params: size = ', size, 'offs=', offset, ' doToggle = ', doToggle);
     for (let i=0;i<size;i++) {
         const theta = i*2*Math.PI/size;
         let c = colorOfAngle(theta+offset, true);
