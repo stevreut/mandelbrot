@@ -95,6 +95,19 @@ em {
 .shortish {
     width: 5em;
 }
+.largegrpdiv {
+    margin-left: 33px;
+    margin-top: 30px;
+    padding: 10px;
+    border-style: solid;
+    border-width: 3px;
+    border-color: #487694;
+    border-radius: 7px;
+    background-color: #202b33;
+}
+.buttondiv {
+    background-color: #202b33;
+}
 @media only screen and (max-width: 800px) {
     .grpdiv {
         display: inline-block;
@@ -131,7 +144,15 @@ em {
         margin: 10px 5px 0px 5px;
     }
     .largegrpdiv {
-        padding: 20px;
+        margin-left: 10px;
+        margin-top: 30px;
+        padding: 5px;
+        border-style: none;
+        background-color: transparent;
     }
+    .buttondiv {
+        background-color: transparent;
+    }
+    
     
 }
