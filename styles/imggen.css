@@ -115,6 +115,8 @@ em {
         border-style: none;
         margin-top: 3px;
         margin-bottom: 2px;
+    }
+    .grpdiv:not(.grpbreakok) {
         white-space: nowrap;
     }
     .grpdiv>label {
