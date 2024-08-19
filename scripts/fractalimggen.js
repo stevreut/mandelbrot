@@ -92,24 +92,57 @@ function fractalGenPageInit() {
     if (histSelElem) {
         histSelElem.addEventListener("change",renderHistory);
     }
-    const paletteSizeInput = document.getElementById("palettesize");
-    if (paletteSizeInput) {
-        const paletteSize = parseInt(paletteSizeInput.value);
-        setPalette(paletteSize,(paletteSize%2===0) /* TODO */);
-        paletteSizeInput.addEventListener("change",()=>{
-            let sz = parseInt(paletteSizeInput.value);
-            let isToggle = (sz%2 === 0);
-            setPalette(sz, isToggle /* TODO */);
-            if (mGrid) {
-                paintGridToCanvas(mGrid,imgParams,true);
-            }    
-        });
-    } else {
-        console.error('no palettesize id found - defaulting to 256');
-    }
+    (document.getElementById("palettesize")).addEventListener("change",handlePaletteChange);
+    (document.getElementById("paletteoffset")).addEventListener("change",handlePaletteChange);
+    handlePaletteChange();
+    // const paletteSizeInput = document.getElementById("palettesize");
+    // if (paletteSizeInput) {
+    //     const paletteSize = parseInt(paletteSizeInput.value);
+    //     setPalette(paletteSize,(paletteSize%2===0) /* TODO */);
+    //     paletteSizeInput.addEventListener("change",()=>{
+    //         let sz = parseInt(paletteSizeInput.value);
+    //         let isToggle = (sz%2 === 0);
+    //         setPalette(sz, isToggle /* TODO */);
+    //         if (mGrid) {
+    //             paintGridToCanvas(mGrid,imgParams,true);
+    //         }    
+    //     });
+    // } else {
+    //     console.error('no palettesize id found - defaulting to 256');
+    // }
     // After a brief time-out, draw the initial Mandelbrot image with default
     // parameters.
     setTimeout(()=>drawMandelbrot(-2.3,-1.2,3.2,70),100);
+}
+
+function handlePaletteChange() {
+    // Called when either "palettesize" or "paletteoffset" inputs change.
+    // If and only if change values are value then canvas image is redrawn
+    // with the altered palette, and this is done without recalculating the
+    // underlying Mandelbrot counts - i.e. no call to getMandelbrotGrid().
+    try {
+        let paletteSize = parseInt((document.getElementById("palettesize")).value);
+        let paletteOffset = parseFloat((document.getElementById("paletteoffset")).value);
+        if (typeof paletteSize !== 'number') {
+            return;
+        }
+        if (Number.isNaN(paletteSize)) {
+            return;
+        }
+        if (typeof paletteOffset !== 'number') {
+            return;
+        }
+        if (Number.isNaN(paletteOffset)) {
+            return;
+        }
+        setPalette(paletteSize,paletteOffset,(paletteSize%2===0));
+        if (mGrid) {
+            paintGridToCanvas(mGrid,imgParams,true);
+        }    
+    } catch (err) {
+        console.error ('error parsing palette info', paletteSize, ' ', paletteOffset);
+        return;
+    }
 }
 
 function setPageInitVals() {
@@ -120,6 +153,7 @@ function setPageInitVals() {
     setVal("histopt","last");
     setVal("pixwid",(dimensionsFromWindowSize()).width);
     setVal("palettesize",256);
+    setVal("paletteoffset",0);
     //
     function setVal(id,val) {
         // Sets the value of an input element after looking it up
@@ -330,7 +364,7 @@ function colorFromCount(count, limit, useStandard) {
     }
 }
 
-function setPalette(size,doToggle) {
+function setPalette(size,offset,doToggle) {
     // Sets the global 'palette' variable to be an array of 256 (for now) 
     // 'colors'; however, these colors are actually nested arrays each having
     // three integer values.  These values could later be converted to
@@ -342,19 +376,27 @@ function setPalette(size,doToggle) {
     console.log('setPalette initial params: size = ', size, ' doToggle = ', doToggle);
     palette = [];
     altPalette = [];
+    const PHASEMX = 360;
     if (size) {
         size = Math.max(size,2);
         size = Math.min(size,32768);
     } else {
         size = 256;  // default
     }
+    if (offset) {
+        offset = Math.max(-PHASEMX,offset);
+        offset = Math.min(PHASEMX,offset);
+        offset*=Math.PI/180;
+    } else {
+        offset = 0;
+    }
     if (doToggle == null || typeof doToggle != 'boolean') {
         doToggle = true;
     }
-    console.log('setPalette final params: size = ', size, ' doToggle = ', doToggle);
+    console.log('setPalette final params: size = ', size, 'offs=', offset, ' doToggle = ', doToggle);
     for (let i=0;i<size;i++) {
         const theta = i*2*Math.PI/size;
-        let c = colorOfAngle(theta, true);
+        let c = colorOfAngle(theta+offset, true);
         if (doToggle && i%2===0) {
             c = c.map((val)=>Math.round(val*0.93));  // TODO
         }
