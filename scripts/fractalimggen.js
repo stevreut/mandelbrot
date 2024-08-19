@@ -194,7 +194,7 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
     button.className = "buttnavail";
 }
 
-function getMandelbrotGrid(imgp) {  // TODO : imgp = imgParams
+function getMandelbrotGrid(imgp) {
     let mGrid = {};
     mGrid.countsHistogram = new Array(imgp.limit+1).fill(0);
     mGrid.width = imgp.canvWidth;
@@ -227,7 +227,7 @@ function getMandelbrotGrid(imgp) {  // TODO : imgp = imgParams
 
 function paintGridToCanvas(mGrid,imgp,useStandardPalette) {
     // TODO - maybe check imgp dimensions against mGrid dimensions here?
-    const imgData = ctx.getImageData(0,0,canvas.width,canvas.height);  // TODO - reconcile with imgp dimensions
+    const imgData = ctx.getImageData(0,0,canvas.width,canvas.height);
     const imgDataData = imgData.data;
     const m2 = imgp.dither**(-2);
     let gridIdx = 0;
@@ -379,7 +379,7 @@ function setPalette(size,offset,doToggle) {
         const theta = i*2*Math.PI/size;
         let c = colorOfAngle(theta+offset, true);
         if (doToggle && i%2===0) {
-            c = c.map((val)=>Math.round(val*0.93));  // TODO
+            c = c.map((val)=>Math.round(val*0.93));
         }
         palette.push(c);
         let c2 = colorOfAngle(theta, false);
@@ -397,9 +397,6 @@ function setPalette(size,offset,doToggle) {
             } else {
                 colr.push(hexCol(th, true));
             }
-        }
-        if (colr.length != 3 && useStandard) {  // TODO - test code only
-            console.log('colr len = ', colr.length, ' for th=', th, ' use=', useStandard);
         }
         return colr;
         //
@@ -492,7 +489,7 @@ function renderHistory() {
     for (let row=firstIdx;row<=lastIdx;row++) {
         const histRow = imgHistory[row];
         rowElem = document.createElement("tr");
-        const { xCtrScaled, yCtrScaled, widthScaled } = scaledValues(histRow);  // TODO
+        const { xCtrScaled, yCtrScaled, widthScaled } = scaledValues(histRow);
         const yIsNegative = (yCtrScaled < 0);
         pushCell(row+1,"right");
         pushCell(xCtrScaled + (yIsNegative?" - ":" + ") + Math.abs(yCtrScaled) + "i","center");
