@@ -538,6 +538,7 @@ function renderHistory() {
 
 function reDrawImg(imgNo) {
     parmLoc = imgHistory[imgNo];
+    pixWidElem.value = parmLoc.canvWidth;
     drawMandelbrot(parmLoc.xMin,parmLoc.yMin,parmLoc.realWidth,parmLoc.limit);
 }
 
