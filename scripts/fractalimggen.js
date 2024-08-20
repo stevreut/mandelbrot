@@ -51,8 +51,6 @@ function checkRequiredElements() {
     checkList.forEach((item)=>{
         let fnc = item[0];
         let id = item[1];
-        let fncType = typeof fnc;
-        let idType = typeof id;
         if (!fnc) {
             console.error('required element "' + id + '" not present');
             allGood = false;
@@ -64,13 +62,19 @@ function checkRequiredElements() {
     }
 }
 
+function setPageInitVals() {
+    limElem.value = 70;
+    zoomElem.value = "2.0";
+    pixWidElem.value = dimensionsFromWindowSize().width;
+    ditherElem.value = "2";
+    paletteSizeElem.value = 256;
+    paletteOffsElem.value = 0;
+    histSelElem.value = "last";
+}
+
 function initCanvasOnly(wid,hgt) {
     // Initialize the canvas in the DOM and set the corresponding
     // context (ctx) but do not draw the Mandelbrot image on it.
-    // if (!canvas) {
-    //     console.error('no ' + "fractalcanvas" + ' id on page');
-    //     return;
-    // }
     ctx = canvas.getContext("2d");
     if (!ctx) {
         console.error('unable to obtain 2d context from canvas ' + id);
@@ -158,29 +162,6 @@ function handlePaletteChange() {
     } catch (err) {
         console.error ('error parsing palette info', paletteSize, ' ', paletteOffset);
         return;
-    }
-}
-
-function setPageInitVals() {
-    // Sets initial default values for various input elements
-    setVal("lim",70);
-    setVal("zoom","2.0");
-    setVal("pixwid",(dimensionsFromWindowSize()).width);
-    setVal("dither","2");
-    setVal("palettesize",256);
-    setVal("paletteoffset",0);
-    setVal("histopt","last");
-    //
-    function setVal(id,val) {
-        // Sets the value of an input element after looking it up
-        // based in 'id'
-        try {
-            (document.getElementById(id)).value = val;
-        } catch (err) {
-            // Log errors but otherwise ignore so that subsequent 
-            // settings can still proceed without interrupting use.
-            console.error('err on page init - ignoring: err = ', err);
-        }
     }
 }
 
@@ -286,9 +267,6 @@ function paintGridToCanvas(mGrid,imgp,useStandardPalette) {
 
 function getDitherValue() {
     try {
-        // if (!ditherElem) {
-        //     throw 'no dither element found';
-        // }
         val = parseInt(ditherElem.value);
         if (Number.isNaN(val) || val < 1 || val > 5) {
             console.error('invalid dither selection = ', val);
@@ -471,10 +449,6 @@ function checkForPixWidChange(event) {
 }
 
 function renderHistory() {
-    // if (!histViewElem) {
-    //     console.error('no histview id on page');
-    //     return;
-    // }
     let histTable = document.querySelector("#histview table");
     if (histTable) {
         histTable.remove();
