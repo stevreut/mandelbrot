@@ -1,17 +1,25 @@
 window.addEventListener("load",fractalGenPageInit);
 
-let canvas = null;
 let ctx = null;  // canvas 2D context
 let palette = null;
 let altPalette = null;
 let canvasHasListener = false;
-let pixWidthInput = null;
-
-let histSelElem = null;
 
 const ASPECTRATIO = 0.75;
 const MINPIXWID = 120;
 const MAXPIXWID = 800;
+
+const limElem = elemFromId("lim");
+const zoomElem = elemFromId("zoom");
+const pixWidElem = elemFromId("pixwid");
+const ditherElem = elemFromId("dither");
+const paletteSizeElem = elemFromId("palettesize");
+const paletteOffsElem = elemFromId("paletteoffset");
+const redrawButton = elemFromId("redrawbutton");
+const resetButton = elemFromId("resetbutton");
+const histSelElem = elemFromId("histopt");
+const canvas = elemFromId("fractalcanvas");
+const histViewElem = elemFromId("histview");
 
 let mGrid = null;
 
@@ -20,15 +28,49 @@ const imgParams = {}; // object containing all parameters (other than
 
 let imgHistory = [];  // array of imgParams instances
 
+function elemFromId(id) {
+    // convenience function
+    return document.getElementById(id);
+}
+
+function checkRequiredElements() {
+    const checkList = [
+        [limElem ,"lim"],
+        [zoomElem ,"zoom"],
+        [pixWidElem ,"pixwid"],
+        [ditherElem ,"dither"],
+        [paletteSizeElem ,"palettesize"],
+        [paletteOffsElem ,"paletteoffset"],
+        [redrawButton ,"redrawbutton"],
+        [resetButton ,"resetbutton"],
+        [histSelElem ,"histopt"],
+        [canvas ,"fractalcanvas"],
+        [histViewElem ,"histview"]
+    ];
+    let allGood = true;
+    checkList.forEach((item)=>{
+        let fnc = item[0];
+        let id = item[1];
+        let fncType = typeof fnc;
+        let idType = typeof id;
+        if (!fnc) {
+            console.error('required element "' + id + '" not present');
+            allGood = false;
+        }
+    });
+    if (!allGood) {
+        console.error('one or more required elements missing');
+        throw "one or more required elements missing";
+    }
+}
+
 function initCanvasOnly(wid,hgt) {
     // Initialize the canvas in the DOM and set the corresponding
     // context (ctx) but do not draw the Mandelbrot image on it.
-    const id = "fractalcanvas";
-    canvas = document.getElementById(id);
-    if (!canvas) {
-        console.error('no ' + id + ' id on page');
-        return;
-    }
+    // if (!canvas) {
+    //     console.error('no ' + "fractalcanvas" + ' id on page');
+    //     return;
+    // }
     ctx = canvas.getContext("2d");
     if (!ctx) {
         console.error('unable to obtain 2d context from canvas ' + id);
@@ -45,7 +87,6 @@ function initCanvasOnly(wid,hgt) {
         const canvasDims = dimensionsFromWindowSize();
         canvas.width = canvasDims.width;
         canvas.height = canvasDims.height;
-        const pixWidElem = document.getElementById("pixwid");
         if (pixWidElem) {
             // Set the value shown in the input box to match
             // the width of the canvas.
@@ -69,26 +110,23 @@ function fractalGenPageInit() {
     // Initializes the DOM and draws Mandelbrot image using initial
     // default parameters.
     imgHistory = [];  // Start with empty history of images
+    checkRequiredElements();
     initCanvasOnly(); // Initialize the HTML canvas element that will contain the Mandelbrot image
-    const drawButton = document.getElementById("redrawbutton");
-    if (drawButton) {
-        drawButton.addEventListener("click",()=>{
-            const lim = parseInt((document.getElementById("lim")).value);
+    if (redrawButton) {
+        redrawButton.addEventListener("click",()=>{
+            const lim = parseInt(limElem.value);
             drawMandelbrot(imgParams.xMin,imgParams.yMin,imgParams.realWidth,lim);
         });
     }
-    const resetButton = document.getElementById("resetbutton");
     if (resetButton) {
         setPageInitVals();  // Set initial default input values on page
         resetButton.addEventListener("click",fractalGenPageInit);
     }
-    pixWidthInput = document.getElementById("pixwid");
-    histSelElem = document.getElementById("histopt");
     if (histSelElem) {
         histSelElem.addEventListener("change",renderHistory);
     }
-    (document.getElementById("palettesize")).addEventListener("change",handlePaletteChange);
-    (document.getElementById("paletteoffset")).addEventListener("change",handlePaletteChange);
+    paletteSizeElem.addEventListener("change",handlePaletteChange);
+    paletteOffsElem.addEventListener("change",handlePaletteChange);
     handlePaletteChange();
     setTimeout(()=>drawMandelbrot(-2.3,-1.2,3.2,70),100);
 }
@@ -99,8 +137,8 @@ function handlePaletteChange() {
     // with the altered palette, and this is done without recalculating the
     // underlying Mandelbrot counts - i.e. no call to getMandelbrotGrid().
     try {
-        let paletteSize = parseInt((document.getElementById("palettesize")).value);
-        let paletteOffset = parseFloat((document.getElementById("paletteoffset")).value);
+        let paletteSize = parseInt(paletteSizeElem.value);
+        let paletteOffset = parseFloat(paletteOffsElem.value);
         if (typeof paletteSize !== 'number') {
             return;
         }
@@ -127,11 +165,11 @@ function setPageInitVals() {
     // Sets initial default values for various input elements
     setVal("lim",70);
     setVal("zoom","2.0");
-    setVal("dither","2");
-    setVal("histopt","last");
     setVal("pixwid",(dimensionsFromWindowSize()).width);
+    setVal("dither","2");
     setVal("palettesize",256);
     setVal("paletteoffset",0);
+    setVal("histopt","last");
     //
     function setVal(id,val) {
         // Sets the value of an input element after looking it up
@@ -175,9 +213,8 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
     imgParams.dither = getDitherValue();
     imgParams.subIncr = imgParams.incrPerPixel/imgParams.dither;
     imgParams.subIncrBase = -imgParams.subIncr*(imgParams.dither-1)/2;
-    const button = document.getElementById("redrawbutton");
-    button.disabled = true;
-    button.className = "buttnnotavail";
+    redrawButton.disabled = true;
+    redrawButton.className = "buttnnotavail";
     mGrid = getMandelbrotGrid(imgParams);
     paintGridToCanvas(mGrid,imgParams,true);
     const imgParamsClone = Object.assign({},imgParams);  // shallow clone of imgParams
@@ -186,8 +223,8 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
     if (!canvasHasListener) {
         addCanvasListener();
     }
-    button.disabled = false;
-    button.className = "buttnavail";
+    redrawButton.disabled = false;
+    redrawButton.className = "buttnavail";
 }
 
 function getMandelbrotGrid(imgp) {
@@ -249,10 +286,9 @@ function paintGridToCanvas(mGrid,imgp,useStandardPalette) {
 
 function getDitherValue() {
     try {
-        const ditherElem = document.getElementById("dither");
-        if (!ditherElem) {
-            throw 'no dither element found';
-        }
+        // if (!ditherElem) {
+        //     throw 'no dither element found';
+        // }
         val = parseInt(ditherElem.value);
         if (Number.isNaN(val) || val < 1 || val > 5) {
             console.error('invalid dither selection = ', val);
@@ -272,7 +308,6 @@ function addCanvasListener() {
 
 function handleCanvasClick(event) {
     let zoomFactor = 2.0;
-    let zoomElem = document.getElementById("zoom");
     if (zoomElem) {
         const zoomValueStr = zoomElem.value.trim();
         let zoomValue = null;
@@ -294,7 +329,6 @@ function handleCanvasClick(event) {
     const newRealWidth = imgParams.realWidth/zoomFactor;
     const newXmin = newCtrX - newRealWidth/2;
     const newYmin = newCtrY - newRealWidth*(imgParams.canvHeight/imgParams.canvWidth)/2;
-    const limElem = document.getElementById("lim");
     let newLimit = null;
     if (limElem) {
         newLimit = parseInt(limElem.value);
@@ -412,13 +446,13 @@ function setPalette(size,offset,doToggle) {
 
 function checkForPixWidChange(event) {
     const saveWidth = imgParams.canvWidth;
-    const newWidStr = pixWidthInput.value.trim();
+    const newWidStr = pixWidElem.value.trim();
     try {
         const newWid = parseInt(newWidStr);
         if (typeof newWid == 'number' && !Number.isNaN(newWid) && newWid > 3) {
             const newHgt = Math.round(newWid*ASPECTRATIO);
             if (newWid !== saveWidth) {
-                pixWidthInput.value = newWid;
+                pixWidElem.value = newWid;
                 initCanvasOnly(newWid,newHgt);
             }
         } else {
@@ -427,21 +461,20 @@ function checkForPixWidChange(event) {
     } catch (err) {
         console.error('ignoring pixel width change error = ', err);
         setTimeout(()=>{
-            pixWidthInput.value = saveWidth;  // On error, restore to canvas dimension
+            pixWidElem.value = saveWidth;  // On error, restore to canvas dimension
         },1500 /* 1.5 seconds */ );
-        pixWidthInput.classList.add("warninput");
+        pixWidElem.classList.add("warninput");
         setTimeout(()=>{
-            pixWidthInput.classList.remove("warninput");
+            pixWidElem.classList.remove("warninput");
         },3000 /* 3 seconds */ );
     }
 }
 
 function renderHistory() {
-    const histViewElem = document.getElementById("histview");
-    if (!histViewElem) {
-        console.error('no histview id on page');
-        return;
-    }
+    // if (!histViewElem) {
+    //     console.error('no histview id on page');
+    //     return;
+    // }
     let histTable = document.querySelector("#histview table");
     if (histTable) {
         histTable.remove();
