@@ -491,7 +491,7 @@ function renderHistory() {
         rowElem = document.createElement("tr");
         const { xCtrScaled, yCtrScaled, widthScaled } = scaledValues(histRow);
         const yIsNegative = (yCtrScaled < 0);
-        pushCell(row+1,"right");
+        pushCell(row+1,"right","javascript:reDrawImg("+row+")");
         pushCell(xCtrScaled + (yIsNegative?" - ":" + ") + Math.abs(yCtrScaled) + "i","center");
         pushCell(widthScaled);
         pushCell(histRow.limit,"center");
@@ -502,9 +502,16 @@ function renderHistory() {
     histTable.appendChild(tBodyElem);
     histViewElem.appendChild(histTable);
     //
-    function pushCell(cellContent,alignment) {
+    function pushCell(cellContent,alignment,href) {
         const td = document.createElement("td");
-        td.textContent = cellContent;
+        if (href) {
+            const aElem = document.createElement("a");
+            aElem.textContent = cellContent;
+            aElem.setAttribute("href",href);
+            td.appendChild(aElem);
+        } else {
+            td.textContent = cellContent;
+        }
         if (alignment) {
             td.setAttribute("align",alignment);
         }
@@ -526,6 +533,13 @@ function renderHistory() {
             return Math.round(val*k)/k;
         }
     }
+}
+
+function reDrawImg(imgNo) {
+    console.log('reDrawImg intercepted with parameter = ' + imgNo + ' type=' + (typeof imgNo));  // TODO
+    parmLoc = imgHistory[imgNo];
+    console.log('select history elem = ', parmLoc);  // TODO
+    drawMandelbrot(parmLoc.xMin,parmLoc.yMin,parmLoc.realWidth,parmLoc.limit);
 }
 
 function getHistoryOption() {

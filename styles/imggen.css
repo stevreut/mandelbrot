@@ -92,6 +92,14 @@ em {
     color: #b1cde9;
     font-family:Verdana, Geneva, Tahoma, sans-serif;
 }
+#histview a {
+    background-color: inherit;
+    height: inherit;
+    color: #aff;
+    font-size: 12pt;
+    font-weight: bold;
+    padding: 0px 5px 0px 5px;
+}
 .shortish {
     width: 5em;
 }
