@@ -83,11 +83,6 @@ function fractalGenPageInit() {
         resetButton.addEventListener("click",fractalGenPageInit);
     }
     pixWidthInput = document.getElementById("pixwid");
-    if (pixWidthInput) {
-        pixWidthInput.addEventListener("change",(event)=>handlePixWidChange(event));
-    } else {
-        console.error('no pixwid id found - resizing disabled');
-    }
     histSelElem = document.getElementById("histopt");
     if (histSelElem) {
         histSelElem.addEventListener("change",renderHistory);
@@ -165,6 +160,7 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
     // (4) append a clone of imgParams to the cumulative history (imgHistory)
     // of rendered Mandelbrot images, and (5) display none, some, or all of that
     // history on the page (renderHistory()).
+    checkForPixWidChange();
     imgParams.limit = limit;
     imgParams.canvWidth = canvas.width;
     imgParams.canvHeight = canvas.height;
@@ -226,7 +222,6 @@ function getMandelbrotGrid(imgp) {
 }
 
 function paintGridToCanvas(mGrid,imgp,useStandardPalette) {
-    // TODO - maybe check imgp dimensions against mGrid dimensions here?
     const imgData = ctx.getImageData(0,0,canvas.width,canvas.height);
     const imgDataData = imgData.data;
     const m2 = imgp.dither**(-2);
@@ -415,7 +410,7 @@ function setPalette(size,offset,doToggle) {
     }
 }
 
-function handlePixWidChange(event) {
+function checkForPixWidChange(event) {
     const saveWidth = imgParams.canvWidth;
     const newWidStr = pixWidthInput.value.trim();
     try {
@@ -425,7 +420,6 @@ function handlePixWidChange(event) {
             if (newWid !== saveWidth) {
                 pixWidthInput.value = newWid;
                 initCanvasOnly(newWid,newHgt);
-                drawMandelbrot(imgParams.xMin,imgParams.yMin,imgParams.realWidth,imgParams.limit);
             }
         } else {
             throw ('invalid or nonnumeric entry for pixel width');
@@ -536,9 +530,7 @@ function renderHistory() {
 }
 
 function reDrawImg(imgNo) {
-    console.log('reDrawImg intercepted with parameter = ' + imgNo + ' type=' + (typeof imgNo));  // TODO
     parmLoc = imgHistory[imgNo];
-    console.log('select history elem = ', parmLoc);  // TODO
     drawMandelbrot(parmLoc.xMin,parmLoc.yMin,parmLoc.realWidth,parmLoc.limit);
 }
 
