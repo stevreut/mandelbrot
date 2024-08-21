@@ -17,8 +17,10 @@ const paletteSizeElem = elemFromId("palettesize");
 const paletteOffsElem = elemFromId("paletteoffset");
 const redrawButton = elemFromId("redrawbutton");
 const resetButton = elemFromId("resetbutton");
+const directButton = elemFromId("directbutton");
 const histSelElem = elemFromId("histopt");
 const canvas = elemFromId("fractalcanvas");
+const dirEntryDiv = elemFromId("dirform");
 const histViewElem = elemFromId("histview");
 
 let mGrid = null;
@@ -43,6 +45,8 @@ function checkRequiredElements() {
         [paletteOffsElem ,"paletteoffset"],
         [redrawButton ,"redrawbutton"],
         [resetButton ,"resetbutton"],
+        [directButton, "directbutton"],
+        [dirEntryDiv, "dirform"],
         [histSelElem ,"histopt"],
         [canvas ,"fractalcanvas"],
         [histViewElem ,"histview"]
@@ -116,19 +120,14 @@ function fractalGenPageInit() {
     imgHistory = [];  // Start with empty history of images
     checkRequiredElements();
     initCanvasOnly(); // Initialize the HTML canvas element that will contain the Mandelbrot image
-    if (redrawButton) {
-        redrawButton.addEventListener("click",()=>{
-            const lim = parseInt(limElem.value);
-            drawMandelbrot(imgParams.xMin,imgParams.yMin,imgParams.realWidth,lim);
-        });
-    }
-    if (resetButton) {
-        setPageInitVals();  // Set initial default input values on page
-        resetButton.addEventListener("click",fractalGenPageInit);
-    }
-    if (histSelElem) {
-        histSelElem.addEventListener("change",renderHistory);
-    }
+    redrawButton.addEventListener("click",()=>{
+        const lim = parseInt(limElem.value);
+        drawMandelbrot(imgParams.xMin,imgParams.yMin,imgParams.realWidth,lim);
+    });
+    setPageInitVals();  // Set initial default input values on page
+    resetButton.addEventListener("click",fractalGenPageInit);
+    directButton.addEventListener("click",promptForDirectEntry);
+    histSelElem.addEventListener("change",renderHistory);
     paletteSizeElem.addEventListener("change",handlePaletteChange);
     paletteOffsElem.addEventListener("change",handlePaletteChange);
     handlePaletteChange();
@@ -163,6 +162,11 @@ function handlePaletteChange() {
         console.error ('error parsing palette info', paletteSize, ' ', paletteOffset);
         return;
     }
+}
+
+function promptForDirectEntry() {
+    console.log('prompting for direct entry');  // TODO
+    console.log('finished prompting for direct entry');  // TODO
 }
 
 function drawMandelbrot(xMin,yMin,realWidth,limit) {

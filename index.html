@@ -44,6 +44,7 @@
         <div class="buttondiv">
             <button id="redrawbutton" class="buttnavail">Redraw</button>
             <button id="resetbutton" class="buttnavail">Reset</button>
+            <button id="directbutton" class="buttnavail">Enter Parameters Directly</button>
         </div>
         <div class="grpdiv grpbreakok">
             <label for="histopt">History Viewing Options</label>
@@ -60,6 +61,32 @@
     <div id="imgdiv">
         <canvas id="fractalcanvas" width="800" height="600">
         </canvas>   
+    </div>
+    <div id="dirform">
+        <p>Random Verbiage</p><!-- TODO -->
+        <div class="grpdiv"><!-- TODO - can I nest grpdiv productively?-->
+            <h3>Center</h3>
+            <div class="grpdiv">
+                <label for="dirreal">Real</label>
+                <input type="number" id="dirreal" value="0"/>
+            </div>
+            <div class="grpdiv">
+                <label for="dirimagine">Real</label>
+                <input type="number" id="dirimagine" value="0"/>
+            </div>
+        </div>
+        <div class="grpdiv">
+            <label for="dirwid">width (real axis)</label>
+            <input type="number" id="dirwid" value="4.0"/>
+        </div>
+        <div class="grpdiv">
+            <label for="dirlim">Limit</label>
+            <input type="number" id="dirlim" value="70"/>
+        </div>
+        <div>
+            <button id="dirdo">Use Entry</button>
+            <button id="dircancal">Cancel</button>
+        </div>
     </div>
     <p id="histview"></p>
     <p>GitHub code repository for this viewer :<a href="https://github.com/stevreut/mandelbrot">github.com/stevreut/mandelbrot</a></p>

@@ -1,3 +1,6 @@
+:root {
+    --pop-up-bg-color: #ffe600;
+}
 * {
     background-color: #222;
     color: #cccccc;
@@ -70,6 +73,25 @@ em {
 .warninput {
     background-color: #ffff00;
     color: #ff0000;
+}
+#dirform {
+    display: none;  /* TODO */
+    position: fixed;
+    bottom: 0;
+    right: 15px;
+    z-index: 9;
+    background-color: var(--pop-up-bg-color);
+    padding: 10px;
+}
+#dirform>div,#dirform h3 {
+    color: #222;
+    background-color: var(--pop-up-bg-color);
+}
+#dirform>p {
+    color: #222;
+    background-color: var(--pop-up-bg-color);
+    margin-top: 10px;
+    padding: 5px;
 }
 #histview>table {
     margin-top: 100px;
