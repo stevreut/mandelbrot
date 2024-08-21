@@ -66,17 +66,21 @@
         <h2>Parameters for Direct Entry</h2><!-- TODO -->
         <div class="grpdiv grpbreakok"><!-- TODO - can I nest grpdiv productively?-->
             <h3>Center</h3>
-            <div class="grpdiv">
-                <label for="dirreal">Real</label>
-                <input type="number" id="dirreal" value="0"/>
-            </div>
-            <div class="grpdiv">
-                <label for="dirimagine">Imaginary</label>
-                <input type="number" id="dirimagine" value="0"/>
-            </div>
+            <table>
+                <tbody>
+                    <tr>
+                        <td><label for="dirreal">Real</label></td>
+                        <td><input type="number" id="dirreal" value="0"/></td>
+                    </tr>
+                    <tr>
+                        <td><label for="dirimagine">Imaginary</label></td>
+                        <td><input type="number" id="dirimagine" value="0"/></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
         <div class="grpdiv grpbreakok">
-            <label for="dirwid">width (real axis)</label>
+            <label for="dirwid">Width (real axis)</label>
             <input type="number" id="dirwid" value="4.0"/>
         </div>
         <div class="grpdiv">

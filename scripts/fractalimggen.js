@@ -153,6 +153,7 @@ function fractalGenPageInit() {
         console.log('dir mins = ', xMin, yMin);
         dirEntryDiv.style.display = "none";
         drawMandelbrot(xMin,yMin,realWid,lim);
+        limElem.value = lim;
     });
     setPageInitVals();  // Set initial default input values on page
     resetButton.addEventListener("click",fractalGenPageInit);

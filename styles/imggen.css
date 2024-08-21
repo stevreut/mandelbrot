@@ -90,8 +90,26 @@ em {
     color: #222;
     background-color: var(--pop-up-bg-color);
 }
+#dirform>h2 {
+    margin-left: 15px;
+}
 #dirform button {
     color: #222;
+}
+#dirform label {
+    color: var(--pop-up-bg-color);
+    background-color: #666;
+    padding: 5px;
+    border-radius: 3px;
+}
+#dirform table {
+    border-collapse: collapse;
+}
+#dirform td {
+    background-color: var(--pop-up-bg-color);
+    border-style: solid;
+    border-color: #808080;
+    border-width: 2px;
 }
 #dirform input {
     background-color: #ccc;
@@ -211,5 +229,8 @@ em {
         padding: 5px;
         font-weight: bold;
         font-style: italic;
+    }
+    #dirform>div>h3 {
+        margin-left: 0px;
     }
 }
