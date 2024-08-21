@@ -1,0 +1,14 @@
+Each of these entries below should be able to be pasted into the 'Enter as JSON'
+input box of the direct entry pop-up and result in a relatively interesting
+region of the Mandelbrot Set
+
+
+{"center":[-0.78605756,0.1406866],"width":0.00019531,"limit":700}
+
+{"center":[0.0212053597078023,0.6421974995297558],"width":2.11664e-11,"limit":7600}
+
+{"center":[-0.786059310527152,0.14068628608245],"width":5.6843e-11,"limit":4000}
+
+{"center":[0.41369310772682,0.303966997803053],"width":4.21e-11,"limit":2000}
+
+{"center":[0.34536912152029,0.05423535855845],"width":3.3286e-10,"limit":5000}
