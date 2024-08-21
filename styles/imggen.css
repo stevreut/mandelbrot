@@ -75,12 +75,13 @@ em {
     color: #ff0000;
 }
 #dirform {
-    display: none;  /* TODO */
+    display: none;
     position: fixed;
+    box-shadow: 0 0 0 100vmax rgba(0,128,255,.65);  /* dim/shadow background */
     top: 10px;
     right: 15px;
     left: 15px;
-    z-index: 9;
+    z-index: 9;  /* force to top */
     border-radius: 15px;
     background-color: var(--pop-up-bg-color);
     padding: 10px;
