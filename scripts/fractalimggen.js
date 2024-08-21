@@ -21,6 +21,12 @@ const directButton = elemFromId("directbutton");
 const histSelElem = elemFromId("histopt");
 const canvas = elemFromId("fractalcanvas");
 const dirEntryDiv = elemFromId("dirform");
+const directCtrXelem = elemFromId("dirreal");
+const directCtrYelem = elemFromId("dirimagine");
+const directWidElem = elemFromId("dirwid");
+const directLimElem = elemFromId("dirlim");
+const dirDoitButton = elemFromId("dirdo");
+const dirCancelButton = elemFromId("dircancel");
 const histViewElem = elemFromId("histview");
 
 let mGrid = null;
@@ -49,7 +55,13 @@ function checkRequiredElements() {
         [dirEntryDiv, "dirform"],
         [histSelElem ,"histopt"],
         [canvas ,"fractalcanvas"],
-        [histViewElem ,"histview"]
+        [histViewElem ,"histview"],
+        [directCtrXelem,"dirreal"],
+        [directCtrYelem,"dirimagine"],
+        [directWidElem,"dirwid"],
+        [directLimElem,"dirlim"],
+        [dirDoitButton,"dirdo"],
+        [dirCancelButton,"dircancel"]
     ];
     let allGood = true;
     checkList.forEach((item)=>{
@@ -123,6 +135,24 @@ function fractalGenPageInit() {
     redrawButton.addEventListener("click",()=>{
         const lim = parseInt(limElem.value);
         drawMandelbrot(imgParams.xMin,imgParams.yMin,imgParams.realWidth,lim);
+    });
+    directButton.addEventListener("click",()=>{
+        dirEntryDiv.style.display = "block";
+    });
+    dirCancelButton.addEventListener("click",()=>{
+        dirEntryDiv.style.display = "none";
+    });
+    dirDoitButton.addEventListener("click",()=>{
+        const ctrX = parseFloat(directCtrXelem.value);
+        const ctrY = parseFloat(directCtrYelem.value);
+        const realWid = parseFloat(directWidElem.value);
+        const lim = parseInt(directLimElem.value);
+        console.log('ctr, wid, lim = ', ctrX, ctrY, realWid, lim);
+        const xMin = ctrX - realWid/2;
+        const yMin = ctrY - realWid*ASPECTRATIO/2;
+        console.log('dir mins = ', xMin, yMin);
+        dirEntryDiv.style.display = "none";
+        drawMandelbrot(xMin,yMin,realWid,lim);
     });
     setPageInitVals();  // Set initial default input values on page
     resetButton.addEventListener("click",fractalGenPageInit);
