@@ -25,6 +25,8 @@ const directCtrXelem = elemFromId("dirreal");
 const directCtrYelem = elemFromId("dirimagine");
 const directWidElem = elemFromId("dirwid");
 const directLimElem = elemFromId("dirlim");
+const directJSONinput = elemFromId("dirjson");
+const directJSONbutton = elemFromId("dirjsonbutton");
 const dirDoitButton = elemFromId("dirdo");
 const dirCancelButton = elemFromId("dircancel");
 const histViewElem = elemFromId("histview");
@@ -60,6 +62,8 @@ function checkRequiredElements() {
         [directCtrYelem,"dirimagine"],
         [directWidElem,"dirwid"],
         [directLimElem,"dirlim"],
+        [directJSONinput,"dirjson"],
+        [directJSONbutton,"dirjsonbutton"],
         [dirDoitButton,"dirdo"],
         [dirCancelButton,"dircancel"]
     ];
@@ -154,6 +158,32 @@ function fractalGenPageInit() {
         dirEntryDiv.style.display = "none";
         drawMandelbrot(xMin,yMin,realWid,lim);
         limElem.value = lim;
+    });
+    directJSONbutton.addEventListener("click",()=>{
+        try {
+            const rawJson = directJSONinput.value;
+            let jsonFine = rawJson.trim().toLowerCase();
+            if (!jsonFine.startsWith("{")) {
+                jsonFine = "{" + jsonFine;
+            }
+            if (!jsonFine.endsWith("}")) {
+                jsonFine += "}";
+            }
+            const obj = JSON.parse(jsonFine);
+            const { center, width, limit } = obj;
+            if (!center || !width || !limit) {
+                throw "required JSON element ('center','width', or 'limit') missing";
+            }
+            const xMin = center[0]-width/2;
+            const yMin = center[1]-width*ASPECTRATIO/2;
+            dirEntryDiv.style.display = "none";
+            drawMandelbrot(xMin,yMin,width,limit);
+            limElem.value = limit;
+        } catch (err) {
+            alert('Error processing JSON content - not used');
+            console.error(err, rawJson);
+            return;
+        }
     });
     setPageInitVals();  // Set initial default input values on page
     resetButton.addEventListener("click",fractalGenPageInit);

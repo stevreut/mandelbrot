@@ -96,7 +96,7 @@ em {
 #dirform button {
     color: #222;
 }
-#dirform label {
+#dirform label * {
     color: var(--pop-up-bg-color);
     background-color: #666;
     padding: 5px;
