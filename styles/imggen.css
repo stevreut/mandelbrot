@@ -81,12 +81,19 @@ em {
     right: 15px;
     left: 15px;
     z-index: 9;
+    border-radius: 15px;
     background-color: var(--pop-up-bg-color);
     padding: 10px;
 }
 #dirform>div,#dirform h2,#dirform h3 {
     color: #222;
     background-color: var(--pop-up-bg-color);
+}
+#dirform button {
+    color: #222;
+}
+#dirform input {
+    background-color: #ccc;
 }
 #dirform>p {
     color: #222;
@@ -187,6 +194,21 @@ em {
     .buttondiv {
         background-color: transparent;
     }
-    
-    
+    #dirform input {
+        margin: 5px;
+    }
+    #dirform button {
+        color: #222;
+        background-color: #caa;
+    }
+    #dirform div {
+        background-color: var(--pop-up-bg-color);
+    }
+    #dirform label {
+        color: #222;
+        background-color: inherit;
+        padding: 5px;
+        font-weight: bold;
+        font-style: italic;
+    }
 }
