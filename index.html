@@ -87,15 +87,30 @@
             <label for="dirlim">Limit</label>
             <input type="number" id="dirlim" value="70"/>
         </div>
-        <div class="grpdiv grpbreakok">
-            <label for="dirjson">...or ... Enter as JSON</label>
-            <input type="text" id="dirjson" placeholder="{&quot;center&quot;:[-0.01,0.99],&quot;width&quot;:2e-2,&quot;limit&quot;:128}"/>
-            <button id="dirjsonbutton">Use JSON</button>
-        </div>
         <div>
             <button id="dirdo">Use Entry</button>
             <button id="dircancel">Cancel</button>
         </div>
+        <div id="jsondiv" class="grpdiv grpbreakok">
+            <img id="jsonq" src="./images/icon/question.svg"/>
+            <label for="dirjson">...or ... Enter as JSON</label>
+            <input type="text" id="dirjson" placeholder="{&quot;center&quot;:[-0.01,0.99],&quot;width&quot;:2e-2,&quot;limit&quot;:128}"/>
+            <button id="dirjsonbutton">Use JSON</button>
+        </div>
+    </div>
+    <div id="jsonexplan">
+        <p align="right"><img id="jsonclose" src="./images/icon/close.svg"/></p>
+        <p>
+            <!-- TODO - link below should be new window so flow of use is not 
+             disrupted -->
+            It is possible to save all of the information for generating
+            a fractal image with this tool as a single sequence of characters
+            in a special format known as <a href="https://www.w3schools.com/whatis/whatis_json.asp">JSON</a>.
+            Some of the features of this tool <em>will eventually</em> produce a JSON 
+            configuration for images and this configuration can then be stored
+            and used later to reproduce the image by pasting that JSON text
+            into 
+        </p>
     </div>
     <p id="histview"></p>
     <p>GitHub code repository for this viewer :<a href="https://github.com/stevreut/mandelbrot">github.com/stevreut/mandelbrot</a></p>

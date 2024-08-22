@@ -29,6 +29,10 @@ const directJSONinput = elemFromId("dirjson");
 const directJSONbutton = elemFromId("dirjsonbutton");
 const dirDoitButton = elemFromId("dirdo");
 const dirCancelButton = elemFromId("dircancel");
+const jsonExplanDiv = elemFromId("jsonexplan");
+const jsonExpCloseIcon = elemFromId("jsonclose");
+const jsonDiv = elemFromId("jsondiv");
+const jsonQuestIcon = elemFromId("jsonq");
 const histViewElem = elemFromId("histview");
 
 let mGrid = null;
@@ -65,7 +69,11 @@ function checkRequiredElements() {
         [directJSONinput,"dirjson"],
         [directJSONbutton,"dirjsonbutton"],
         [dirDoitButton,"dirdo"],
-        [dirCancelButton,"dircancel"]
+        [dirCancelButton,"dircancel"],
+        [jsonExplanDiv,"jsonexplan"],
+        [jsonExpCloseIcon,"jsonclose"],
+        [jsonQuestIcon,"jsonq"],
+        [jsonDiv,"jsondiv"]
     ];
     let allGood = true;
     checkList.forEach((item)=>{
@@ -184,6 +192,12 @@ function fractalGenPageInit() {
             console.error(err, rawJson);
             return;
         }
+    });
+    jsonQuestIcon.addEventListener("click",()=>{
+        jsonExplanDiv.style.display = "block";
+    });
+    jsonExpCloseIcon.addEventListener("click",()=>{
+        jsonExplanDiv.style.display = "none";
     });
     setPageInitVals();  // Set initial default input values on page
     resetButton.addEventListener("click",fractalGenPageInit);
