@@ -204,7 +204,6 @@ function fractalGenPageInit() {
     });
     setPageInitVals();  // Set initial default input values on page
     resetButton.addEventListener("click",fractalGenPageInit);
-    directButton.addEventListener("click",promptForDirectEntry);
     histSelElem.addEventListener("change",renderHistory);
     paletteSizeElem.addEventListener("change",handlePaletteChange);
     paletteOffsElem.addEventListener("change",handlePaletteChange);
@@ -240,11 +239,6 @@ function handlePaletteChange() {
         console.error ('error parsing palette info', paletteSize, ' ', paletteOffset);
         return;
     }
-}
-
-function promptForDirectEntry() {
-    console.log('prompting for direct entry');  // TODO
-    console.log('finished prompting for direct entry');  // TODO
 }
 
 function drawMandelbrot(xMin,yMin,realWidth,limit) {
