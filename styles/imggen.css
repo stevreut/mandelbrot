@@ -140,9 +140,15 @@ em {
     background-color: white;
     color: blue;
 }
+#jsonexplan pre {
+    font-family: 'Courier New', Courier, monospace;
+    color: #444;
+}
 #jsonexplan a {
-    /* padding: 0px; */
     margin: 0px;
+    text-decoration: underline;
+    font-weight: 900;
+    color: #440088;
 }
 #histview>table {
     margin-top: 100px;

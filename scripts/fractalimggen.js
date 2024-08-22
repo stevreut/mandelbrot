@@ -167,6 +167,9 @@ function fractalGenPageInit() {
         drawMandelbrot(xMin,yMin,realWid,lim);
         limElem.value = lim;
     });
+    directJSONinput.addEventListener("focus",()=>{
+        directJSONinput.value = "";
+    })
     directJSONbutton.addEventListener("click",()=>{
         try {
             const rawJson = directJSONinput.value;

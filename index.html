@@ -101,15 +101,27 @@
     <div id="jsonexplan">
         <p align="right"><img id="jsonclose" src="./images/icon/close.svg"/></p>
         <p>
-            <!-- TODO - link below should be new window so flow of use is not 
-             disrupted -->
             It is possible to save all of the information for generating
             a fractal image with this tool as a single sequence of characters
-            in a special format known as <a href="https://www.w3schools.com/whatis/whatis_json.asp">JSON</a>.
+            in a special format known as 
+            <a onclick="window.open('https://www.w3schools.com/whatis/whatis_json.asp','_blank','width=600,height=500,left=40,top=60')">JSON</a>.
             Some of the features of this tool <em>will eventually</em> produce a JSON 
             configuration for images and this configuration can then be stored
             and used later to reproduce the image by pasting that JSON text
-            into 
+            into the "Enter as JSON" field.
+        </p>
+        <p>
+            Following is a sample JSON text.  Note that the elements required 
+            purposes of this site ("center", "width", and "limit") are included:
+        </p>
+        <p><pre>
+            {"center":[-1.4798237066909197,0.0005146283038554526],
+            "width":2.384185791015625e-8,
+            "limit":3300}
+        </pre></p>
+        <p>
+            Try copying the text above, pasting it into the "Enter as JSON" box, and
+            then pressing the "Use JSON" button.
         </p>
     </div>
     <p id="histview"></p>
