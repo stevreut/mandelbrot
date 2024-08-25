@@ -15,6 +15,16 @@ h1, h2 {
 h1 {
     font-size: 36pt;
 }
+#pnote {
+    color: #9ab;
+    background-color: #202b33;
+    font-size: smaller;
+    font-style: italic;
+    padding: 5px;
+    border-style: solid;
+    border-color: #556;
+    border-radius: 3px;
+}
 h1>img {
     margin: 0px 15px 0px 0px;
 }
