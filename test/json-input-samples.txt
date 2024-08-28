@@ -19,3 +19,10 @@ region of the Mandelbrot Set
 
 {"center":[-0.7821082996484, 0.1482248729942],"width":2.38419e-8,
 "limit":6000}
+
+{"center":[-0.7376349685005767, 0.17449554563181013],
+"width":1.00915e-12,
+"limit":3000,
+"dims":[800,600],
+"quality":3,
+"palette":{"size":1024,"offset":0}}
