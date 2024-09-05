@@ -33,3 +33,8 @@ region of the Mandelbrot Set
 "dims":[1728,1296],
 "quality":5,
 "palette":{"size":701,"offset":300}}
+
+{"center":[-0.8114715910850364,0.20143588628737977],
+"width":9.956154370803815e-13,
+"limit":3400,"dims":[710,533],
+"palette":{"size":513,"offset":0},"quality":2}
