@@ -540,7 +540,7 @@ function renderHistory() {
     histTable = document.createElement("table");
     const tHeadElem = document.createElement("thead");
     const trElem = document.createElement("tr");
-    const hdrs = ("#;Center Point;Width;Limit;Pixel Dimensions;Quality").split(";");
+    const hdrs = ("#;Center Point;Width;Limit;Pixel Dimensions;Quality;JSON").split(";");
     hdrs.forEach((val,idx)=>{
         const thElem = document.createElement("th");
         thElem.textContent = val;
@@ -574,6 +574,11 @@ function renderHistory() {
         pushCell(histRow.limit,"center");
         pushCell(histRow.canvWidth + " x " + histRow.canvHeight,"center");
         pushCell(histRow.dither,"center");
+        const tdElem = document.createElement("td")
+        const jsonButton = document.createElement("button")
+        jsonButton.textContent = "Show JSON"
+        tdElem.appendChild(jsonButton)
+        rowElem.appendChild(tdElem)
         tBodyElem.appendChild(rowElem);
     }
     histTable.appendChild(tBodyElem);
