@@ -9,6 +9,8 @@ const ASPECTRATIO = 0.75;
 const MINPIXWID = 120;
 const MAXPIXWID = 800;
 
+const TA_ID = "jsontextarea"
+
 const limElem = elemFromId("lim");
 const zoomElem = elemFromId("zoom");
 const pixWidElem = elemFromId("pixwid");
@@ -272,6 +274,7 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
     imgParams.subIncrBase = -imgParams.subIncr*(imgParams.dither-1)/2;
     redrawButton.disabled = true;
     redrawButton.className = "buttnnotavail";
+    removeHistTextArea()
     mGrid = getMandelbrotGrid(imgParams);
     paintGridToCanvas(mGrid,imgParams,true);
     const imgParamsClone = Object.assign({},imgParams);  // shallow clone of imgParams
@@ -282,6 +285,13 @@ function drawMandelbrot(xMin,yMin,realWidth,limit) {
     }
     redrawButton.disabled = false;
     redrawButton.className = "buttnavail";
+}
+
+function removeHistTextArea() {
+    let elem = document.getElementById(TA_ID)
+    if (elem) {
+        elem.remove()
+    }
 }
 
 function getMandelbrotGrid(imgp) {
@@ -619,7 +629,6 @@ function renderHistory() {
 }
 
 function handleJsonClick(rowNum) {
-    const TA_ID = "jsontextarea"
     let jsonTxtArea = document.getElementById(TA_ID)
     if (jsonTxtArea) {
         jsonTxtArea.value = ''
