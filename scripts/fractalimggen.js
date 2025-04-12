@@ -619,8 +619,31 @@ function renderHistory() {
 }
 
 function handleJsonClick(rowNum) {
-    // TODO
-    console.log('would generate JSON for row ', rowNum)
+    const TA_ID = "jsontextarea"
+    let jsonTxtArea = document.getElementById(TA_ID)
+    if (jsonTxtArea) {
+        jsonTxtArea.value = ''
+    } else {
+        jsonTxtArea = document.createElement("textarea")
+        jsonTxtArea.setAttribute("id",TA_ID)
+        jsonTxtArea.setAttribute("rows",10)
+        jsonTxtArea.setAttribute("cols",50)
+        histViewElem.appendChild(jsonTxtArea)
+    }
+    const historyEntry = imgHistory[rowNum]
+    if (!historyEntry) {
+        // TODO - handle more gracefully eventually
+        throw 'no history element for row ' + rowNum
+    }
+    const { limit, realWidth, xCtr, yCtr, dither } = historyEntry
+    const jsonObj = {
+        center: [xCtr,yCtr],
+        width: realWidth,
+        limit: limit,
+        dither: dither
+    }
+    const jsonStr = JSON.stringify(jsonObj)
+    jsonTxtArea.value = jsonStr
 }
 
 function reDrawImg(imgNo) {
