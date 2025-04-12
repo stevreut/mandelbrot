@@ -645,11 +645,21 @@ function handleJsonClick(rowNum) {
         throw 'no history element for row ' + rowNum
     }
     const { limit, realWidth, xCtr, yCtr, dither } = historyEntry
+    // TODO - modularize this later - reused code
+    let pSize = parseInt(paletteSizeElem.value)
+    let pOffs = parseInt(paletteOffsElem.value)
     const jsonObj = {
         center: [xCtr,yCtr],
         width: realWidth,
         limit: limit,
         dither: dither
+    }
+    if (typeof pSize === 'number' && typeof pOffs === 'number') {
+        jsonObj.palette = {
+            type: "standard",
+            size: pSize,
+            offset: pOffs
+        }
     }
     const jsonStr = JSON.stringify(jsonObj)
     jsonTxtArea.value = jsonStr
