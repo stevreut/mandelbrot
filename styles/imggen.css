@@ -15,7 +15,7 @@ h1, h2 {
 h1 {
     font-size: 36pt;
 }
-#pnote {
+.pnote {
     color: #9ab;
     background-color: #202b33;
     font-size: smaller;
@@ -24,6 +24,10 @@ h1 {
     border-style: solid;
     border-color: #556;
     border-radius: 3px;
+}
+.pnote em {
+    color: #ace2dc;
+    background-color: inherit;
 }
 h1>img {
     margin: 0px 15px 0px 0px;
