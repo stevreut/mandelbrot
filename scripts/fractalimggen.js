@@ -568,7 +568,7 @@ function renderHistory() {
         rowElem = document.createElement("tr");
         const { xCtrScaled, yCtrScaled, widthScaled } = scaledValues(histRow);
         const yIsNegative = (yCtrScaled < 0);
-        pushCell(row+1,"right","javascript:reDrawImg("+row+")");
+        pushCell(row+1,"center",(row<lastIdx?"javascript:reDrawImg("+row+")":null),);
         pushCell(xCtrScaled + (yIsNegative?" - ":" + ") + Math.abs(yCtrScaled) + "i","center");
         pushCell(widthScaled);
         pushCell(histRow.limit,"center");

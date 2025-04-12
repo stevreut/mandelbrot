@@ -181,7 +181,7 @@ em {
     color: #b1cde9;
     font-family:Verdana, Geneva, Tahoma, sans-serif;
 }
-#histview a {
+#histview a, #histview td:first-child {
     background-color: inherit;
     height: inherit;
     color: #aff;
