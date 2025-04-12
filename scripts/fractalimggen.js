@@ -576,13 +576,14 @@ function renderHistory() {
         pushCell(histRow.dither,"center");
         const tdElem = document.createElement("td")
         const jsonButton = document.createElement("button")
+        jsonButton.addEventListener('click',()=>handleJsonClick(row))
         jsonButton.textContent = "Show JSON"
         tdElem.appendChild(jsonButton)
         rowElem.appendChild(tdElem)
         tBodyElem.appendChild(rowElem);
     }
     histTable.appendChild(tBodyElem);
-    histViewElem.appendChild(histTable);
+    histViewElem.prepend(histTable);
     //
     function pushCell(cellContent,alignment,href) {
         const td = document.createElement("td");
@@ -615,6 +616,11 @@ function renderHistory() {
             return Math.round(val*k)/k;
         }
     }
+}
+
+function handleJsonClick(rowNum) {
+    // TODO
+    console.log('would generate JSON for row ', rowNum)
 }
 
 function reDrawImg(imgNo) {
